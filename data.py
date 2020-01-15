@@ -1,10 +1,10 @@
 import serial, time
 
-# data = [left pinky, left ring, left middle, left index, left thumb, 
+# data = [left pinky, left ring, left middle, left index, left thumb,
 #         right thumb, right index, right middle, right ring, right pinky,
 #         left x, left y, left z, right x, right y, right z]
 
-class Glove(object):
+class Data(object):
     def __init__(self, data=[0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0]):
         self.data = data
         self.pinkyL = data[0]
@@ -23,42 +23,12 @@ class Glove(object):
         self.xR = data[13]
         self.yR = data[14]
         self.zR = data[15]
-    
-    
+
+
     def __repr__(self):
         #res = "Left Pinky Resistance: " + self.pinkyL
         return str(self.data)
-        
-    
+
+
     def update(self, data):
         self.__init__(data)
-        
-PowerGlove = Glove()
-ArduinoSerial = serial.Serial('/dev/ttyACM0', 9600)
-time.sleep(2)   # wait two seconds for connection to be established
-while True:
-    serial_data = ArduinoSerial.readline()
-    print(serial_data)
-    
-        
-
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-    

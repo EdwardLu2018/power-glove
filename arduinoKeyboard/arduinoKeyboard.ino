@@ -11,17 +11,18 @@ void setup() {
   jetsonSerial.begin(9600);
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
-  swipeRight();
 }
 
 void loop() {
   if (jetsonSerial.available()) {
     byte in = jetsonSerial.read();
-    if (in == '1') {
-      swipeRight();
-    }
-    else if (in == '2') {
-      swipeLeft();
+    switch(in) {
+      case '0': swipeRight(); break;
+      case '1': swipeLeft(); break;
+      case '2': minWindow(); break;
+      case '3': up(); break;
+      case '4': down(); break;
+      default: break;
     }
   }
 }
@@ -85,6 +86,6 @@ void down() {
 
 void releaseKey() {
   buf[0] = 0;
-  buf[2] = 0;
-  Serial.write(buf, 8); // Release key
+  buf[2] = KEY_NONE; // Release key
+  Serial.write(buf, 8); 
 }
