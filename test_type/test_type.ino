@@ -48,13 +48,7 @@ void swipeLeft() {
   releaseKey();
 }
 
-void releaseKey() {
-  buf[0] = 0;
-  buf[2] = 0;
-  Serial.write(buf, 8); // Release key
-}
-
-void mouseKeys() {
+void enableMouse() {
   for (int i = 0; i < 5; i++) {
     delay(10);
     buf[0] = 0;
@@ -62,4 +56,35 @@ void mouseKeys() {
     Serial.write(buf, 8);
     releaseKey();
   }
+}
+
+void minWindow() {
+  buf[0] = 0;
+  buf[2] = KEY_LEFTMETA; 
+  Serial.write(buf, 8);
+  delay(100);
+  buf[0] = 0;
+  buf[2] = KEY_M; 
+  Serial.write(buf, 8);
+  releaseKey();
+}
+
+void up() {
+  buf[0] = 0;
+  buf[2] = KEY_UP; 
+  Serial.write(buf, 8);
+  releaseKey();
+}
+
+void down() {
+  buf[0] = 0;
+  buf[2] = KEY_DOWN; 
+  Serial.write(buf, 8);
+  releaseKey();
+}
+
+void releaseKey() {
+  buf[0] = 0;
+  buf[2] = 0;
+  Serial.write(buf, 8); // Release key
 }
