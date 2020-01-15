@@ -9,11 +9,20 @@ uint8_t buf[8] = { 0 };
 void setup() {
   Serial.begin(9600);
   jetsonSerial.begin(9600);
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  swipeRight();
 }
 
 void loop() {
-  if (jetsonSerial.available() && Serial.available()) {
-    Serial.println(jetsonSerial.read());
+  if (jetsonSerial.available()) {
+    byte in = jetsonSerial.read();
+    if (in == '1') {
+      swipeRight();
+    }
+    else if (in == '2') {
+      swipeLeft();
+    }
   }
 }
 
@@ -39,8 +48,7 @@ void swipeLeft() {
   releaseKey();
 }
 
-void releaseKey()
-{
+void releaseKey() {
   buf[0] = 0;
   buf[2] = 0;
   Serial.write(buf, 8); // Release key

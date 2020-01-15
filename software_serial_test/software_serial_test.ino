@@ -10,12 +10,18 @@ void setup()
 
   // set the data rate for the SoftwareSerial port
   mySerial.begin(9600);
+  pinMode(13, OUTPUT);
 }
 
 void loop() // run over and over
 {
-  if (mySerial.available()) {
-    Serial.println(mySerial.read());
+  if (mySerial.available() > 0) {
+    byte in = mySerial.read();
+    if (in == '1') {
+      digitalWrite(13, HIGH);
+    }
+    if (in == '2') {
+      digitalWrite(13, LOW);
+    }
   }
-    
 }
