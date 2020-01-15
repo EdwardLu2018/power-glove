@@ -1,8 +1,6 @@
 import serial, time
 
-# data = [left pinky, left ring, left middle, left index, left thumb,
-#         right thumb, right index, right middle, right ring, right pinky,
-#         left x, left y, left z, right x, right y, right z]
+# data = [left pinky, ..., left thumb, flex, touch, x, y, z, orientation]
 
 class Data(object):
     def __init__(self, data=[0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0]):
