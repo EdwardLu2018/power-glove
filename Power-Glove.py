@@ -34,12 +34,11 @@ class Glove(object):
         self.__init__(data)
         
 PowerGlove = Glove()
-ArduinoSerial = serial.Serial('/dev/ttyUSB0', 9600)
+ArduinoSerial = serial.Serial('/dev/ttyACM0', 9600)
 time.sleep(2)   # wait two seconds for connection to be established
 while True:
     serial_data = ArduinoSerial.readline()
     print(serial_data)
-    print("h")
     
         
 
