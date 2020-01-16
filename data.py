@@ -3,7 +3,7 @@ import serial, time
 # data = [left pinky, ..., left thumb, flex, touch, x, y, z, orientation]
 
 class Data(object):
-    def __init__(self, data=[0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0]):
+    def __init__(self, data=[0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0]):
         self.data = data
         #flex
         self.pinky = data[0]
@@ -22,22 +22,17 @@ class Data(object):
         self.y = data[11]
         self.z = data[12]
         self.orientation = data[13]
+        #self.mode = data[14]    #0 = mouse mode, 1 = keyboard, 2 = gestures
 
 
     def __repr__(self):
         #res = "Left Pinky Resistance: " + self.pinkyL
         return str(self.data)
 
+    
+    def flex_data(self):
+        return self.data[:5]
 
     def update(self, data):
         self.__init__(data)
 
-
-#calls an action based on current left hand data
-def call_left_action(left_glove):
-    pass
-
-
-#calls an action based on current right hand data
-def call_right_action(right_glove):
-    pass
