@@ -40,7 +40,7 @@ while True:
         right_action = 0
     
     #sends actions to arduino (prioritizes left action)
-    new_data = right_action if left_action == None else left_action
+    new_data = right_action if left_action == 0 else left_action
     SendSerial = serial.Serial('/dev/ttyTHS1', 9600)
     SendSerial.write(new_data.encode())
     

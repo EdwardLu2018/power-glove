@@ -1,42 +1,35 @@
-from data import Data
-import serial
+import serial, time
 import numpy as np
-import time
+from data import Data
 
-LEFT_GLOVE_PORT = "/dev/cu.usbmodem142201"
-RGHT_GLOVE_PORT = ""
-BAUDRATE = 9600
-TIMEOUT = 1
+ser1 = serial.Serial('/dev/ttyACM2', 9600)
+#ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-OPEN = 0
-FIST = 1
-ONE = 2
-TWO = 3
-THREE = 4
-FOUR = 5
-THUMB = 6
-OK = 7
+OPEN = '0'
+FIST = '1'
 
-def read_flex_data(ser):
-    line = ser.readline().decode().replace("\n\r", "")
-    print(line)
-    data = Data(list(np.fromstring(line, dtype=float, sep=" ")))
-    return data.flex
 
-def main():
-    left_glove_ser = serial.Serial(port=LEFT_GLOVE_PORT, baudrate=BAUDRATE, timeout=TIMEOUT)
-    # rght_glove_ser = serial.serial.Serial(port=RGHT_GLOVE_PORT, baudrate=BAUDRATE, timeout=TIMEOUT)
-    data_file = open("left_flex_data.txt", "w")
+data_file = open("flex_data.txt", "a")
 
+time.sleep(1)
+
+for i in range(20):
     try:
-        while True:
-            left_data = read_flex_data(left_glove_ser)
-            # rght_data = read_flex_data(rght_glove_ser)
-            data_file.write(OPEN + " " + " ".join(left_data) + "\n")
-            time.sleep(0.25)
+        data1 = ser1.readline().decode('utf-8')
+    except:
+        print("failed serial")
+        continue
+    line = data1.replace("\r\n", "")
+    #data = np.fromstring(line, dtype=int, sep=" ")
+    print(line.split(" "))
+    data = [int(s) for s in line.split(' ')]
+    print(data)
+    if len(data) < 14:
+        print("no len")
+        continue 
+    flex_data = Data(list(data))
+    #print(flex_data.flex_data())
+    data_file.write(FIST + " " + " ".join([str(d) for d in flex_data.flex_data()]) + "\n")
+    time.sleep(0.25)
 
-    except KeyboardInterrupt:
-        data_file.close()
 
-if __name__ == "__main__":
-    main()
