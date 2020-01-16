@@ -2,34 +2,54 @@ import serial, time
 import numpy as np
 from data import Data
 
-ser1 = serial.Serial('/dev/ttyACM2', 9600)
-#ser2 = serial.Serial('/dev/ttyACM1', 9600)
+FILENAME = "left_flex_data.txt"
 
 OPEN = '0'
 FIST = '1'
+ONE = '2'
+TWO = '3'
+THREE = '4'
+FOUR = '5'
+MIDDLE = '6'
+OK = '7'
 
+def str_to_list(string):
+    return [int(s) for s in string.split(' ')]
 
-data_file = open("flex_data.txt", "a")
+def list_to_str(lst):
+    return " ".join([str(elem) for elem in lst])
 
-time.sleep(1)
+def main():
+    ser1 = serial.Serial('/dev/ttyACM2', 9600)
+    #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-for i in range(20):
-    try:
-        data1 = ser1.readline().decode('utf-8')
-    except:
-        print("failed serial")
-        continue
-    line = data1.replace("\r\n", "")
-    #data = np.fromstring(line, dtype=int, sep=" ")
-    print(line.split(" "))
-    data = [int(s) for s in line.split(' ')]
-    print(data)
-    if len(data) < 14:
-        print("no len")
-        continue 
-    flex_data = Data(list(data))
-    #print(flex_data.flex_data())
-    data_file.write(FIST + " " + " ".join([str(d) for d in flex_data.flex_data()]) + "\n")
-    time.sleep(0.25)
+    data_file = open(FILENAME, "a")
+    time.sleep(1)
 
+    for i in range(20):
+        try:
+            raw_data = ser1.readline().decode('utf-8')
+        except:
+            print("failed serial, ignoring")
+            continue
 
+        line = raw_data.replace("\r\n", "")
+        # data = np.fromstring(line, dtype=int, sep=" ")
+
+        # print(line.split(" "))
+        data = str_to_list(line)
+        # print(data)
+
+        if len(data) < 14:
+            print("incorrect data, ignoring")
+            continue
+
+        data = Data(list(data))
+        flex_data = data.flex_data()
+        print(flex_data)
+
+        data_file.write(FIST + " " + list_to_str(flex_data)) + "\n")
+        time.sleep(0.25)
+
+if __name__ == '__main__':
+    main()

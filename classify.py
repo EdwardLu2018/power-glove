@@ -1,20 +1,16 @@
-from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
+import numpy as np
+import pickle
 
 if __name__ == '__main__':
-    # Loading the Digits dataset
-    digits = datasets.load_digits()
+    data = np.loadtxt('left_flex_data.txt', delimiter=' ')
+    np.random.shuffle(data)
 
-    # To apply an classifier on this data, we need to flatten the image, to
-    # turn the data in a (samples, feature) matrix:
-    n_samples = len(digits.images)
-    X = digits.images.reshape((n_samples, -1))
-    y = digits.target
+    X, y = data[:,1:], data[:,0]
 
-    # Split the dataset in two equal parts
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.5, random_state=0)
 
@@ -35,6 +31,7 @@ if __name__ == '__main__':
         clf.fit(X_train, y_train)
 
         print("Best parameters set found on development set:")
+        # {'C': 1, 'gamma': 0.001, 'kernel': 'rbf'}
         print()
         print(clf.best_params_)
         print()
@@ -55,3 +52,6 @@ if __name__ == '__main__':
         y_true, y_pred = y_test, clf.predict(X_test)
         print(classification_report(y_true, y_pred))
         print()
+
+    with open('left_glove_classifier.pkl', 'w') as file:
+        pickle.dump(clf, file)
