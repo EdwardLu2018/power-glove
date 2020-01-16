@@ -1,17 +1,17 @@
-//#include <Wire.h>
-//#include <Adafruit_MMA8451.h>
-//#include <Adafruit_Sensor.h>
-//
-//Adafruit_MMA8451 mma = Adafruit_MMA8451();
+#include <Wire.h>
+#include <Adafruit_MMA8451.h>
+#include <Adafruit_Sensor.h>
+
+Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
 void setup() {
   Serial.begin(9600);
-//  if (!mma.begin()) {
-//    Serial.println("Couldnt start");
-//    while (1);
-//  }
-//  Serial.println("started");
-//  mma.setRange(MMA8451_RANGE_2_G);
+  if (!mma.begin()) {
+    Serial.println("Couldnt start");
+    while (1);
+  }
+  
+  mma.setRange(MMA8451_RANGE_2_G);
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
   pinMode(A2, INPUT);
@@ -48,28 +48,18 @@ void loop() {
   Serial.print(digitalRead(7));
   Serial.print(" ");
 
-  Serial.print(1); 
-  Serial.print(" ");
-  Serial.print(1); 
-  Serial.print(" ");
-  Serial.print(1);
-  Serial.print(" "); 
-  Serial.print(1); 
-  Serial.println();
-
-//  mma.read();
-//  Serial.print(mma.x); 
-//  Serial.print(" ");
-//  Serial.print(mma.y); 
-//  Serial.print(" ");
-//  Serial.print(mma.z);
-//  Serial.print(" "); 
-//  Serial.print(mma.getOrientation()); 
-//  Serial.println();
+  mma.read();
 
   /* Get a new sensor event */ 
-//  sensors_event_t event; 
-//  mma.getEvent(&event);
+  sensors_event_t event; 
+  mma.getEvent(&event);
 
-  delay(10);
+  Serial.print(event.acceleration.x);
+  Serial.print(" ");
+  Serial.print(event.acceleration.y); 
+  Serial.print(" ");
+  Serial.print(event.acceleration.z); 
+  Serial.print(" ");
+  Serial.print(mma.getOrientation());
+  Serial.println();
 }
