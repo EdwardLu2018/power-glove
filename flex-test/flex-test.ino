@@ -23,6 +23,8 @@ void setup() {
   pinMode(5, INPUT);
   pinMode(6, INPUT);
   pinMode(7, INPUT);
+
+  delay(500);
 }
 
 void loop() {
@@ -54,11 +56,11 @@ void loop() {
   sensors_event_t event; 
   mma.getEvent(&event);
 
-  Serial.print(event.acceleration.x);
+  Serial.print(int(event.acceleration.x * 100));
   Serial.print(" ");
-  Serial.print(event.acceleration.y); 
+  Serial.print(int(event.acceleration.y* 100)); 
   Serial.print(" ");
-  Serial.print(event.acceleration.z); 
+  Serial.print(int(event.acceleration.z* 100)); 
   Serial.print(" ");
   Serial.print(mma.getOrientation());
   Serial.println();
