@@ -3,24 +3,25 @@ import serial, time
 # data = [left pinky, ..., left thumb, flex, touch, x, y, z, orientation]
 
 class Data(object):
-    def __init__(self, data=[0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0]):
+    def __init__(self, data=[0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0]):
         self.data = data
-        self.pinkyL = data[0]
-        self.ringL = data[1]
-        self.middleL = data[2]
-        self.indexL = data[3]
-        self.thumbL = data[4]
-        self.thumbR = data[5]
-        self.indexR = data[6]
-        self.middleR = data[7]
-        self.ringR = data[8]
-        self.pinkyR = data[9]
-        self.xL = data[10]
-        self.yL = data[11]
-        self.zL = data[12]
-        self.xR = data[13]
-        self.yR = data[14]
-        self.zR = data[15]
+        #flex
+        self.pinky = data[0]
+        self.ring = data[1]
+        self.middle = data[2]
+        self.index = data[3]
+        self.thumb = data[4]
+        #touch
+        self.pinkyTouch = data[5]
+        self.ringTouch = data[6]
+        self.middleTouch = data[7]
+        self.indexTouch = data[8]
+        self.thumbTouch = data[9]
+        #orientation
+        self.x = data[10]
+        self.y = data[11]
+        self.z = data[12]
+        self.orientation = data[13]
 
 
     def __repr__(self):
@@ -30,3 +31,13 @@ class Data(object):
 
     def update(self, data):
         self.__init__(data)
+
+
+#calls an action based on current left hand data
+def call_left_action(left_glove):
+    pass
+
+
+#calls an action based on current right hand data
+def call_right_action(right_glove):
+    pass
