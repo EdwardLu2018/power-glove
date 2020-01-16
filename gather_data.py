@@ -3,7 +3,7 @@ import serial
 import numpy as np
 import time
 
-LEFT_GLOVE_PORT = ""
+LEFT_GLOVE_PORT = "/dev/cu.usbmodem142201"
 RGHT_GLOVE_PORT = ""
 BAUDRATE = 9600
 TIMEOUT = 1
@@ -18,12 +18,13 @@ THUMB = 6
 OK = 7
 
 def read_flex_data(ser):
-    line = ser.readline().replace("\n\r", "")
-    data = Data(list(np.fromstring(line, dtype=int, sep=" ")))
+    line = ser.readline().decode().replace("\n\r", "")
+    print(line)
+    data = Data(list(np.fromstring(line, dtype=float, sep=" ")))
     return data.flex
 
 def main():
-    left_glove_ser = serial.serial.Serial(port=LEFT_GLOVE_PORT, baudrate=BAUDRATE, timeout=TIMEOUT)
+    left_glove_ser = serial.Serial(port=LEFT_GLOVE_PORT, baudrate=BAUDRATE, timeout=TIMEOUT)
     # rght_glove_ser = serial.serial.Serial(port=RGHT_GLOVE_PORT, baudrate=BAUDRATE, timeout=TIMEOUT)
     data_file = open("left_flex_data.txt", "w")
 
