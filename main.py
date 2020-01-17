@@ -1,9 +1,13 @@
 import serial, time
+import numpy as np
 from data import Data
-from util import *
-from spells_fsm import *
-import actions
+import pickle
+from swipeGestureFunctions import *
+from utils import *
 from pose_classifier import PoseClassifier
+from poses_fsm import *
+import actions
+
 from getGestures import *
 
 LEFT_GLOVE_PORT = ''
@@ -73,12 +77,64 @@ def main():
                 left_pose = clf.classify_pose(left_data, right=False)
                 rght_pose = clf.classify_pose(rght_data, right=True)
 
-                # swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1, clf)
-                # swipeDir = swipeInfo[0]
-                # tempcount = swipeInfo[1]
+                rght_swipeInfo = getSwipeInfo(rght_pose, rght_data, count, tempcount, rght_ser, clf)
+                left_swipeInfo = getSwipeInfo(left_pose, left_data, count, tempcount, left_ser, clf)
+                
+                rhgt_swipeDir = rhgt_swipeInfo[0]
+                rhgt_swipeDir = left_swipeInfo[0]
+                
+                if rght_swipeDir != None:
+                    #serial send right hand gesture
+                    if rght_swipeDir == "SWIPE UP":
+                        key_ser.write(chr(3).encode())
+                    elif rght_swipeDir == "SWIPE DOWN":
+                        key_ser.write(chr(4).encode())
+                    elif rght_swipeDir == "volume up":
+                        key_ser.write(chr(133).encode())
+                    elif rght_swipeDir == "volume down":
+                        key_ser.write(chr(134).encode())
+                    tempcount = rght_swipeInfo[1]
+                elif left_swipeDir != None:
+                    if left_swipeDir == "SWIPE UP":
+                        key_ser.write(chr(3).encode())
+                    elif left_swipeDir == "SWIPE DOWN":
+                        key_ser.write(chr(4).encode())
+                    elif left_swipeDir == "volume up":
+                        key_ser.write(chr(133).encode())
+                    elif left_swipeDir == "volume down":
+                        key_ser.write(chr(134).encode())
+                    #serial send left hand gesture
+                    tempcount = left_swipeInfo[1]
+                
 
-                if chrome_fsm.update(left_data, left_pose, clf):
-                    key_ser.write(chr("INSERT SOMETHING HERE").encode())
+                if OpenChromeFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(6).encode())
+                elif CloseWindowFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(7).encode())
+                elif MinimizeFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(2).encode())
+                elif FaceTimeFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(130).encode())
+                elif ITunesFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(131).encode())
+                elif EnterFSM.update(left_data, left_pose, clf):
+                    key_ser.write(chr(132).encode())
+                elif ShowWindowsFSM.update(left_data,left_pose, clf):
+                    key_ser.write(chr(129).encode())
+                elif OpenChromeFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(6).encode())
+                elif CloseWindowFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(7).encode())
+                elif MinimizeFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(2).encode())
+                elif FaceTimeFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(130).encode())
+                elif ITunesFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(131).encode())
+                elif EnterFSM.update(rght_data, rght_pose, clf):
+                    key_ser.write(chr(132).encode())
+                elif ShowWindowsFSM.update(rght_data,rght_pose, clf):
+                    key_ser.write(chr(129).encode())
 
 
 if __name__ == '__main__':
