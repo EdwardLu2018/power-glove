@@ -7,11 +7,11 @@ def chr_interval(key1, key2, key3, bound1, bound2, flex, capital):
         key2 = key2.upper()
         key3 = key3.upper()
     if flex <= bound1:
-        return chr(key1)
+        return ord(key1)
     elif bound1 < flex <= bound2:
-        return chr(key2)
+        return ord(key2)
     else:
-        return chr(key3)
+        return ord(key3)
         
 
 
@@ -69,3 +69,4 @@ def call_right_action(glove):
                                 glove.pinky, glove.thumbTouch)
     elif glove.mode == 2:
         pass
+    
