@@ -115,7 +115,11 @@ def main():
                 
                 if str(pose) == OPEN:
                     print("left hand open")
-                elif 
+                elif str(pose) == NEUTRAL:
+                    print("left hand in neutral position")
+                elif str(pose) == FIST:
+                    print("left hand fist")
+
                 
                 #print(left_swipeDir, rght_swipeDir)
                 if rght_swipeDir != None:
