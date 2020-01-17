@@ -1,6 +1,8 @@
 import serial, time
 import numpy as np
 from data import Data
+import pickle
+#import sklearn
 
 FILENAME = "left_flex_data.txt"
 
@@ -28,10 +30,11 @@ def main():
     ser1 = serial.Serial('/dev/cu.usbmodem142201', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-    data_file = open(FILENAME, "a")
+    clf = pickle.load(open('left_glove_classifier.pkl', 'rb'))
+
     time.sleep(1)
 
-    for i in range(20):
+    while True:
         if ser1.inWaiting() > 0:
             try:
                 raw_data = ser1.readline().decode('utf-8')
@@ -51,11 +54,11 @@ def main():
                 continue
 
             data = Data(list(data))
-            flex_data = data.flex_data()
+            flex_data = [data.flex_data()]
             print(flex_data)
 
-            data_file.write(TWO + " " + list_to_str(flex_data) + "\n")
-        time.sleep(0.1)
+            print(clf.predict(flex_data))
+        # time.sleep(0.25)
 
 if __name__ == '__main__':
     main()

@@ -53,5 +53,5 @@ if __name__ == '__main__':
         print(classification_report(y_true, y_pred))
         print()
 
-    with open('left_glove_classifier.pkl', 'w') as file:
+    with open('left_glove_classifier.pkl', 'wb') as file:
         pickle.dump(clf, file)
