@@ -30,19 +30,17 @@ def chr_interval(key1, key2, key3, bound1, bound2, flex, capital):
 
 def call_left_action(glove):
     #changes mode
-<<<<<<< HEAD
-    if glove.mode == 0:
-=======
     if glove.indexTouch == glove.middleTouch == glove.ringTouch ==\
             glove.pinkyTouch == 0:
         glove.mode = (glove.mode + 1) % 3
     elif glove.mode == 0:
->>>>>>> 77f800473333eb9d95d4879201ae028e90b574b1
         if glove.middleTouch == 0:
             return chr("i")
         elif glove.indexTouch == 0:
             pass
             #right click
+        else:
+            return None
     elif glove.mode == 1:       # keyboard mode
         if glove.indexTouch == 0:
             if glove.pinkyTouch == 0:   # pinky + index keys t, g, b
@@ -78,6 +76,8 @@ def call_right_action(glove):
         elif glove.middleTouch == 0:
             pass
             #right click
+        else:
+            return None
 
 
     elif glove.mode == 1:       # keyboard mode
