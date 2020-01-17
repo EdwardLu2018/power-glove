@@ -10,7 +10,7 @@ class PoseClassifier(object):
         self.FOUR = 5
         self.MIDDLE = 6
         self.OK = 7
-        self.ROCK =8
+        self.ROCK = 8
         self.NEUTRAL = 9
         self.CALI = 10
         self.THUMB = 11

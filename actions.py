@@ -30,7 +30,14 @@ def chr_interval(key1, key2, key3, bound1, bound2, flex, capital):
 
 def call_left_action(glove):
     #changes mode
+<<<<<<< HEAD
     if glove.mode == 0:
+=======
+    if glove.indexTouch == glove.middleTouch == glove.ringTouch ==\
+            glove.pinkyTouch == 0:
+        glove.mode = (glove.mode + 1) % 3
+    elif glove.mode == 0:
+>>>>>>> 77f800473333eb9d95d4879201ae028e90b574b1
         if glove.middleTouch == 0:
             return chr("i")
         elif glove.indexTouch == 0:
@@ -74,19 +81,19 @@ def call_right_action(glove):
     elif glove.mode == 1:       # keyboard mode
         if glove.indexTouch == 0:
             if glove.pinkyTouch == 0:   # pinky + index keys t, g, b
-                return chr_interval('y', 'h', 'n', 660, 683, 
+                return chr_interval('y', 'h', 'n', 645, 685, 
                                     glove.index, glove.thumbTouch)
             else:
-                return chr_interval('u', 'j', 'm', 660, 683, 
+                return chr_interval('u', 'j', 'm', 645, 685, 
                                     glove.index, glove.thumbTouch)
         elif glove.middleTouch == 0:
-            return chr_interval('i', 'k', ',', 700, 725, 
+            return chr_interval('i', 'k', ',', 700, 745, 
                                 glove.middle, glove.thumbTouch)
         elif glove.ringTouch == 0:
-            return chr_interval('o', 'l', '.', 773, 785, 
+            return chr_interval('o', 'l', '.', 760, 767, 
                                 glove.ring, glove.thumbTouch)
         elif glove.pinkyTouch == 0:
-            return chr_interval('p', ';', '/', 685, 700, 
+            return chr_interval('p', ';', '/', 690, 700, 
                                 glove.pinky, glove.thumbTouch)
 
     elif glove.mode == 2:
