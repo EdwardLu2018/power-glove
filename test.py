@@ -10,19 +10,19 @@ from poses_fsm import *
 import actions
 
 
-OPEN = '0'
-FIST = '1'
-ONE = '2'
-TWO = '3'
-THREE = '4'
-FOUR = '5'
-MIDDLE = '6'
-OK = '7'
-ROCK ='8'
-NEUTRAL = '9'
-CALI = '10'
-THUMB = '11'
-GUN = '12'
+OPEN = 0
+FIST = 1
+ONE = 2
+TWO = 3
+THREE = 4
+FOUR = 5
+MIDDLE = 6
+OK = 7
+ROCK =8
+NEUTRAL = 9
+CALI = 10
+THUMB = 11
+GUN = 12
 
 
 
@@ -113,54 +113,54 @@ def main():
                 left_swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
                 rght_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
 
-                if str(pose) == OPEN:
+                if pose)== OPEN:
                     print("left hand open")
-                elif str(pose) == NEUTRAL:
+                elif pose)== NEUTRAL:
                     print("left hand in neutral position")
-                elif str(pose) == FIST:
+                elif pose)== FIST:
                     print("left hand fist")
-                elif str(pose) == ONE:
+                elif pose)== ONE:
                     print("left hand one")
-                elif str(pose) == TWO:
+                elif pose)== TWO:
                     print("left hand two")
-                elif str(pose) == THREE:
+                elif pose)== THREE:
                     print("left hand three")
-                elif str(pose) == FOUR:
+                elif pose)== FOUR:
                     print("left hand four")
-                elif str(pose) == MIDDLE:
+                elif pose)== MIDDLE:
                     print("left hand middle finger")
-                elif str(pose) == ROCK:
+                elif pose)== ROCK:
                     print("left hand rock and roll")
-                elif str(pose) == CALI:
+                elif pose)== CALI:
                     print("left hand surfs up")
-                elif str(pose) == THUMB:
+                elif pose)== THUMB:
                     print("left hand thumbs up")
-                elif str(pose) == GUN:
+                elif pose)== GUN:
                     print("left hand pew pew")
 
-                if str(pose2) == OPEN:
+                if pose2 == OPEN:
                     print("right hand open")
-                elif str(pose2) == NEUTRAL:
+                elif pose2 == NEUTRAL:
                     print("right hand in neutral position")
-                elif str(pose2) == FIST:
+                elif pose2 == FIST:
                     print("right hand fist")
-                elif str(pose2) == ONE:
+                elif pose2 == ONE:
                     print("right hand one")
-                elif str(pose2) == TWO:
+                elif pose2 == TWO:
                     print("right hand two")
-                elif str(pose2) == THREE:
+                elif pose2 == THREE:
                     print("right hand three")
-                elif str(pose2) == FOUR:
+                elif pose2 == FOUR:
                     print("right hand four")
-                elif str(pose2) == MIDDLE:
+                elif pose2 == MIDDLE:
                     print("right hand middle finger")
-                elif str(pose2) == ROCK:
+                elif pose2 == ROCK:
                     print("right hand rock and roll")
-                elif str(pose2) == CALI:
+                elif pose2 == CALI:
                     print("right hand surfs up")
-                elif str(pose2) == THUMB:
+                elif pose2 == THUMB:
                     print("right hand thumbs up")
-                elif str(pose2) == GUN:
+                elif pose2 == GUN:
                     print("right hand pew pew")
 
                 #print(left_swipeDir, rght_swipeDir)
