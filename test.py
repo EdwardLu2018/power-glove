@@ -105,9 +105,9 @@ def main():
                     elif rght_swipeDir == "SWIPE DOWN":
                         key_ser.write(chr(4).encode())
                     elif rght_swipeDir == "SWIPE RIGHT":
-                        key_ser.write(chr(1).encode())
-                    elif rght_swipeDir == "SWIPE LEFT":
                         key_ser.write(chr(0).encode())
+                    elif rght_swipeDir == "SWIPE LEFT":
+                        key_ser.write(chr(1).encode())
                     elif rght_swipeDir == "volume up":
                         key_ser.write(chr(133).encode())
                     elif rght_swipeDir == "volume down":
@@ -119,9 +119,9 @@ def main():
                     elif left_swipeDir == "SWIPE DOWN":
                         key_ser.write(chr(4).encode())
                     elif rght_swipeDir == "SWIPE RIGHT":
-                        key_ser.write(chr(1).encode())
-                    elif rght_swipeDir == "SWIPE LEFT":
                         key_ser.write(chr(0).encode())
+                    elif rght_swipeDir == "SWIPE LEFT":
+                        key_ser.write(chr(1).encode())
                     elif left_swipeDir == "volume up":
                         key_ser.write(chr(133).encode())
                     elif left_swipeDir == "volume down":
