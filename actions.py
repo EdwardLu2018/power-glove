@@ -60,6 +60,8 @@ def call_left_action(glove):
         elif glove.pinkyTouch == 0:
             return chr_interval('q', 'a', 'z', 620, 650, 
                                 glove.pinky, glove.thumbTouch)
+        else:
+            return None
     elif glove.mode == 2:
         pass
         
@@ -95,6 +97,8 @@ def call_right_action(glove):
         elif glove.pinkyTouch == 0:
             return chr_interval('p', ';', '/', 690, 700, 
                                 glove.pinky, glove.thumbTouch)
+        else:
+            return None
 
     elif glove.mode == 2:
         pass
