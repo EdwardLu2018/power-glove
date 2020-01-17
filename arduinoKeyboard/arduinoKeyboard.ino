@@ -12,7 +12,7 @@ void setup() {
   Serial.begin(9600);
   jetsonSerial.begin(9600);
   pinMode(13, OUTPUT);
-  digitalWrite(13, HIGH);
+  digitalWrite(13, LOW);
 }
 
 void loop() {
@@ -22,12 +22,12 @@ void loop() {
       mode = 0;
     }
     switch(in) {
-      case '0': swipeRight(); break;
-      case '1': swipeLeft(); break;
-      case '2': minWindow(); break;
-      case '3': up(); break;
-      case '4': down(); break;
-      case '5': enableMouse(); break;
+      case 0: swipeRight(); break;
+      case 1: swipeLeft(); break;
+      case 2: minWindow(); break;
+      case 3: up(); break;
+      case 4: down(); break;
+      case 5: enableMouse(); break;
       default: keyboardEntry(in); break;
     }
   }
