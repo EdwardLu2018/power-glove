@@ -49,7 +49,7 @@ def main():
             swipevert = (detectSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None)
             swipeside = (detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None )
             if (tempcount < count - 10):
-                #print((velx_data,vely_data, velz_data, orientation, detectSwipe(orientation, velx_data, vely_data, velz_data, ser1), detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1)))
+                print(pose, velx_data,vely_data, velz_data, orientation)
                 if (swipeside or swipevert) and not (swipeside and swipevert) and (pose == clf.NEUTRAL or pose == clf.OPEN):
                     if (swipevert):
                         print(detectSwipe(orientation, velx_data, vely_data, velz_data, ser1))
