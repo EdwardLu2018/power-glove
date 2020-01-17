@@ -2,6 +2,7 @@ import serial, time
 import numpy as np
 from data import Data
 import pickle
+#import sklearn
 
 FILENAME = "left_flex_data.txt"
 
@@ -29,7 +30,7 @@ def main():
     ser1 = serial.Serial('/dev/ttyACM0', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-    clf = pickle.open('left_glove_classifier.pkl')
+    clf = pickle.load(open('left_glove_classifier.pkl', 'rb'))
 
     time.sleep(1)
 
