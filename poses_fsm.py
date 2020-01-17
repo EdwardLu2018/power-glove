@@ -132,3 +132,28 @@ class EnterFSM(object):
                 self.curr_state = self.idle
             return False
 
+class ShowWindowsFSM(object):
+    def __init__(self):
+        self.idle = 0
+        self.fist = 1
+        self.neutral = 2
+        self.curr_state = 0
+
+    def update(self, data, pose, clf):
+        print(pose, self.curr_state)
+        if self.curr_state == self.idle:
+            if pose == clf.FIST:
+                self.curr_state = self.fist
+            else:
+                self.curr_state = self.idle
+            return False
+        elif self.curr_state == self.fist:
+            if pose == clf.NEUTRAL or pose == clf.FOUR:
+                self.curr_state = self.neutral
+            else:
+                self.curr_state = self.fist
+            return False
+        elif self.curr_state == self.neutral:
+            self.curr_state = self.idle
+            return True
+

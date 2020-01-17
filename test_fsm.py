@@ -5,7 +5,7 @@ import pickle
 from swipeGestureFunctions import *
 from utils import *
 from pose_classifier import PoseClassifier
-from spells_fsm import *
+from poses_fsm import *
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
 
     clf = PoseClassifier()
 
-    chrome_fsm = OpenChromeFSM()
+    chrome_fsm = ShowWindowsFSM()
 
     time.sleep(1)
 
