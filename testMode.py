@@ -65,7 +65,7 @@ while True:
         previous_action = None
         action = None
         continue
-    elif action_action != None:
+    elif action != None:
         if action == 100:     # changes mode (only by right hand)
             print("CHANGED MODE", right_glove.mode)
             mode = right_glove.mode
