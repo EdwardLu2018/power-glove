@@ -5,7 +5,7 @@ import pickle
 from swipeGestureFunctions import *
 from utils import *
 from pose_classifier import PoseClassifier
-from getGestures import *
+from spells_fsm import *
 
 
 def main():
@@ -14,9 +14,10 @@ def main():
 
     clf = PoseClassifier()
 
+    chrome_fsm = OpenChromeFSM()
+
     time.sleep(1)
-    count = 0
-    tempcount = -100
+
     while True:
         if ser1.inWaiting() > 0:
             try:
@@ -40,13 +41,10 @@ def main():
             flex_data = [data.flex_data()]
             flex_data = data.flex_data()
 
-            count+=1
-
             pose = clf.classify_pose(data, right = False)
 
-            swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1, clf)
-            swipeDir = swipeInfo[0]
-            tempcount = swipeInfo[1]
+            if chrome_fsm.update(data, pose, clf):
+                print("did it")
 
 
         # time.sleep(0.25)

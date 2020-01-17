@@ -4,6 +4,7 @@ from util import *
 from spells_fsm import *
 import actions
 from pose_classifier import PoseClassifier
+from getGestures import *
 
 LEFT_GLOVE_PORT = ''
 RGHT_GLOVE_PORT = ''
@@ -21,6 +22,9 @@ def main():
 
     print("Starting...")
     time.sleep(2)
+
+    count = 0
+    tempcount = -100
 
     previous_r_action = None
     previous_l_action = None
@@ -68,6 +72,10 @@ def main():
             elif left_data.mode == 2 and rght_data.mode == 2:
                 left_pose = clf.classify_pose(left_data, right=False)
                 rght_pose = clf.classify_pose(rght_data, right=True)
+
+                # swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1, clf)
+                # swipeDir = swipeInfo[0]
+                # tempcount = swipeInfo[1]
 
                 if chrome_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr("INSERT SOMETHING HERE").encode())

@@ -1,9 +1,10 @@
 from swipeGestureFunctions import *
 
-def getSwipeInfo(pose, data, count, tempcount, serial):
+def getSwipeInfo(pose, data, count, tempcount, ser1, clf):
     velx_data = data.x
     vely_data = data.y
     velz_data = data.z
+    orientation = data.orientation
     swipeType = detectSwipe(orientation, velx_data, vely_data, velz_data, ser1)
     swipevert = (detectSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None)
     swipeside = (detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None )
@@ -17,7 +18,6 @@ def getSwipeInfo(pose, data, count, tempcount, serial):
                 print(detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1))
                 swipeType = detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1)
             tempcount = count
-    
+
     return (swipeType, tempcount)
 
-    
