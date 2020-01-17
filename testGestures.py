@@ -4,13 +4,14 @@ from data import Data
 import pickle
 from swipeGestureFunctions import *
 from utils import *
+from pose_classifier import PoseClassifier
 
 
 def main():
     ser1 = serial.Serial('/dev/cu.usbmodem14301', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-    clf = pickle.load(open('left_glove_classifier.pkl', 'rb'))
+    clf = PoseClassifier()
 
     time.sleep(1)
     count = 0
@@ -56,7 +57,7 @@ def main():
            
             #print(flex_data)
 
-            sprint(clf.predict(flex_data))
+            print(clf.classify_pose(data, right = False))
         # time.sleep(0.25)
 
 if __name__ == '__main__':

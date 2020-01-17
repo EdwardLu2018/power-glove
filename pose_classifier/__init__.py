@@ -1,7 +1,7 @@
 import pickle
 
 class PoseClassifier(object):
-    def __init__():
+    def __init__(self):
         self.OPEN = 0
         self.FIST = 1
         self.ONE = 2
