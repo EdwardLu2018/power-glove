@@ -27,7 +27,7 @@ def list_to_str(lst):
     return " ".join([str(elem) for elem in lst])
 
 def main():
-    ser1 = serial.Serial('/dev/ttyACM0', 9600)
+    ser1 = serial.Serial('/dev/cu.usbmodem142201', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
     clf = pickle.load(open('left_glove_classifier.pkl', 'rb'))
@@ -54,11 +54,11 @@ def main():
                 continue
 
             data = Data(list(data))
-            flex_data = data.flex_data()
+            flex_data = [data.flex_data()]
             print(flex_data)
 
             print(clf.predict(flex_data))
-        time.sleep(0.25)
+        # time.sleep(0.25)
 
 if __name__ == '__main__':
     main()

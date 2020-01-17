@@ -25,7 +25,7 @@ def list_to_str(lst):
     return " ".join([str(elem) for elem in lst])
 
 def main():
-    ser1 = serial.Serial('/dev/ttyACM0', 9600)
+    ser1 = serial.Serial('/dev/cu.usbmodem142201', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
     data_file = open(FILENAME, "a")
@@ -54,8 +54,8 @@ def main():
             flex_data = data.flex_data()
             print(flex_data)
 
-            data_file.write(THUMB + " " + list_to_str(flex_data) + "\n")
-        time.sleep(0.25)
+            data_file.write(TWO + " " + list_to_str(flex_data) + "\n")
+        time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
