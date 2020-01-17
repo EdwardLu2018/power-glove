@@ -36,7 +36,7 @@ while True:
         left_glove.update(left_data)
         if counter == 10:
             counter = 0
-            right_action = None
+            action = None
         continue
     try:
 
@@ -57,28 +57,33 @@ while True:
     #calling respective actions
     right_action = actions.call_right_action(right_glove)
     left_action = actions.call_left_action(left_glove)
-
-    if previous_action != None and previous_action == right_action:
+    # prioritizes right hand
+    action = left_action if right_action == None else right_action
+    
+    if previous_action != None and previous_action == action:
         counter = 1
         previous_action = None
-        right_action = None
+        action = None
         continue
-    elif right_action != None:
-        if right_action == 100:     # changes mode
+    elif action_action != None:
+        if action == 100:     # changes mode (only by right hand)
             print("CHANGED MODE", right_glove.mode)
-            if right_glove.mode == 0:
-                mode = 0
+            mode = right_glove.mode
+            left_glove.mode = mode
+            if mode == 0:
                 print("Mouse Mode!")
                 GPIO.output(32, GPIO.HIGH)
-            elif right_glove.mode != 0:
-                mode = right_glove.mode
+            elif mode != 0:
                 print("Not mouse mode")
                 GPIO.output(32, GPIO.LOW)
             previous_action = 100
             continue 
         else:
-            print(right_action)
             SendSerial = serial.Serial('/dev/ttyTHS1', 9600)
-            SendSerial.write(chr(right_action).encode())
-            previous_action = right_action
+            if mode == 0:
+                pass
+            elif mode == 1:
+                SendSerial.write(chr(right_action).encode())
+            print(action)
+            previous_action = action
 
