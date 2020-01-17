@@ -11,7 +11,7 @@ from getGestures import *
 def main():
     ser1 = serial.Serial('/dev/ttyACM0', 9600)
     ser2 = serial.Serial('/dev/ttyACM1', 9600)
-    key_ser = serial.Serial('/dev/ttyTSH1', 9600)
+    key_ser = serial.Serial('/dev/ttyTHS1', 9600)
 
     clf = PoseClassifier()
 
@@ -23,19 +23,19 @@ def main():
             try:
                 raw_data = ser1.readline().decode('utf-8')
                 raw_data2 = ser2.readline().decode('utf-8')
+                line = raw_data.replace("\r\n", "")
+                line2 = raw_data2.replace("\r\n", "")
+                # print(line.split(" "))
+                data = str_to_list(line) + [1]
+                data2 = str_to_list(line2) + [1]
+                # print(data)
+
             except:
                 print("failed serial, ignoring")
                 continue
 
-            line = raw_data.replace("\r\n", "")
-            line2 = raw_data2.replace("\r\n", "")
 
             # data = np.fromstring(line, dtype=int, sep=" ")
-
-            # print(line.split(" "))
-            data = str_to_list(line) + [1]
-            data2 = str_to_list(line2) + [1]
-            # print(data)
 
             if len(data) < 15 or len(data2) < 15:
                 print("incorrect data, ignoring")
@@ -52,33 +52,35 @@ def main():
             pose2 = clf.classify_pose(data2, right= True)
 
             left_swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
-            right_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
+            rght_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
 
 
-            print(left_swipeDir, right_swipeDir)
+            #print(left_swipeDir, rght_swipeDir)
             if rght_swipeDir != None:
-            #serial send right hand gesture
+                print("right ges")
+                #serial send right hand gesture
                 if rght_swipeDir == "SWIPE UP":
                     key_ser.write(chr(3).encode())
                 elif rght_swipeDir == "SWIPE DOWN":
-                    key_ser.write(chr(129).encode())
+                    key_ser.write(chr(4).encode())
                 elif rght_swipeDir == "SWIPE RIGHT":
-                    key_ser.write(chr(0).encode())
-                elif rght_swipeDir == "SWIPE LEFT":
                     key_ser.write(chr(1).encode())
+                elif rght_swipeDir == "SWIPE LEFT":
+                    key_ser.write(chr(0).encode())
                 elif rght_swipeDir == "volume up":
                     key_ser.write(chr(133).encode())
                 elif rght_swipeDir == "volume down":
                     key_ser.write(chr(134).encode())
-            if left_swipeDir != None:
+            elif left_swipeDir != None:
+                print("left ges")
                 if left_swipeDir == "SWIPE UP":
                     key_ser.write(chr(3).encode())
                 elif left_swipeDir == "SWIPE DOWN":
-                    key_ser.write(chr(129).encode())
+                    key_ser.write(chr(4).encode())
                 elif rght_swipeDir == "SWIPE RIGHT":
-                    key_ser.write(chr(0).encode())
-                elif rght_swipeDir == "SWIPE LEFT":
                     key_ser.write(chr(1).encode())
+                elif rght_swipeDir == "SWIPE LEFT":
+                    key_ser.write(chr(0).encode())
                 elif left_swipeDir == "volume up":
                     key_ser.write(chr(133).encode())
                 elif left_swipeDir == "volume down":
