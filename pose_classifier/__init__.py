@@ -1,26 +1,28 @@
 import pickle
 
-OPEN = 0
-FIST = 1
-ONE = 2
-TWO = 3
-THREE = 4
-FOUR = 5
-MIDDLE = 6
-OK = 7
-ROCK =8
-NEUTRAL = 9
-CALI = 10
-THUMB = 11
-GUN = 12
+class PoseClassifier(object):
+    def __init__():
+        self.OPEN = 0
+        self.FIST = 1
+        self.ONE = 2
+        self.TWO = 3
+        self.THREE = 4
+        self.FOUR = 5
+        self.MIDDLE = 6
+        self.OK = 7
+        self.ROCK =8
+        self.NEUTRAL = 9
+        self.CALI = 10
+        self.THUMB = 11
+        self.GUN = 12
 
-L_PICKLE = 'left_glove_classifier.pkl'
-R_PICKLE = 'rght_glove_classifier.pkl'
+        self.L_PICKLE = 'left_glove_classifier.pkl'
+        self.R_PICKLE = 'rght_glove_classifier.pkl'
 
-def classify_pose(data, right=False):
-    flex_data = data.flex_data()
-    if right:
-        clf = pickle.load(open(R_PICKLE, 'rb'))
-    else:
-        clf = pickle.load(open(L_PICKLE, 'rb'))
-    return clf.predict([flex_data])
+    def classify_pose(self, data, right=False):
+        flex_data = data.flex_data()
+        if right:
+            clf = pickle.load(open(self.R_PICKLE, 'rb'))
+        else:
+            clf = pickle.load(open(self.L_PICKLE, 'rb'))
+        return clf.predict([flex_data])[0]
