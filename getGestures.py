@@ -21,31 +21,31 @@ def getSwipeInfo(pose, data, count, tempcount, ser1, clf):
             
         if (swipeside or swipevert) and not (swipeside and swipevert) and (pose == clf.ONE ):
             if (swipevert):
-                if swipeType = "SWIPE UP":
+                if swipeType == "SWIPE UP":
                     swipeType = "volume up"
-                elif swipeType = "SWIPE DOWN":
+                elif swipeType == "SWIPE DOWN":
                     swipeType = "volume down"
                 print(swipeType)
             else:
                 print(detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1))
-                if swipeType = "SWIPE RIGHT":
+                if swipeType == "SWIPE RIGHT":
                     swipeType = "volume up"
-                elif swipeType = "SWIPE DOWN":
+                elif swipeType == "SWIPE LEFT":
                     swipeType = "volume down"
                 print(swipeType)
             tempcount = count
             
         if (swipeside or swipevert) and not (swipeside and swipevert) and (pose == clf.TWO ):
             if (swipevert):
-                if swipeType = "SWIPE UP":
+                if swipeType == "SWIPE UP":
                     swipeType = "brightness up"
-                elif swipeType = "SWIPE DOWN":
+                elif swipeType == "SWIPE DOWN":
                     swipeType = "brightness down"
                 print(swipeType)
             else:
-                if swipeType = "SWIPE RIGHT":
+                if swipeType == "SWIPE RIGHT":
                     swipeType = "brightness up"
-                elif swipeType = "SWIPE DOWN":
+                elif swipeType == "SWIPE LEFT":
                     swipeType = "brightness down"
                 print(swipeType)
             tempcount = count
