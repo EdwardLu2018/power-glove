@@ -12,6 +12,11 @@ THREE = '4'
 FOUR = '5'
 MIDDLE = '6'
 OK = '7'
+ROCK ='8'
+NEUTRAL = '9'
+CALI = 'A'
+THUMB = 'B'
+GUN = 'C'
 
 def str_to_list(string):
     return [int(s) for s in string.split(' ')]
@@ -20,7 +25,7 @@ def list_to_str(lst):
     return " ".join([str(elem) for elem in lst])
 
 def main():
-    ser1 = serial.Serial('/dev/ttyACM2', 9600)
+    ser1 = serial.Serial('/dev/ttyACM0', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
     data_file = open(FILENAME, "a")
@@ -41,7 +46,7 @@ def main():
             data = str_to_list(line)
             # print(data)
 
-            if len(data) < 14:
+            if len(data) < 15:
                 print("incorrect data, ignoring")
                 continue
 
@@ -49,7 +54,7 @@ def main():
             flex_data = data.flex_data()
             print(flex_data)
 
-            data_file.write(FIST + " " + list_to_str(flex_data)) + "\n")
+            data_file.write(THUMB + " " + list_to_str(flex_data) + "\n")
         time.sleep(0.25)
 
 if __name__ == '__main__':
