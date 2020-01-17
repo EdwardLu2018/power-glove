@@ -1,47 +1,77 @@
-import data
-import serial
+import serial, time
+from data import Data
+from util import *
+from spells_fsm import *
+import actions
+from pose_classifier import PoseClassifier
 
-left_glove = data.Data()
-right_glove = data.Data()
+LEFT_GLOVE_PORT = ''
+RGHT_GLOVE_PORT = ''
+KEYBOARD_PORT = '/dev/ttyTHS1'
+BAUD = 9600
 
-left_serial = serial.Serial('/dev/ttyACM0', 9600)
-right_serial = serial.Serial('/dev/ttyACM1', 9600)
+def main():
+    left_ser = serial.Serial(LEFT_GLOVE_PORT, BAUD)
+    rght_ser = serial.Serial(RGHT_GLOVE_PORT, BAUD)
+    key_ser = serial.Serial(KEYBOARD_PORT, BAUD)
 
-previous_left_action = 0         #prevents rapid unwanted repeated action
-previous_right_action = 0
+    clf = PoseClassifier()
 
-while True:
-    global previous_left_action
-    global previous_right_action
+    chrome_fsm = OpenChromeFSM()
 
-    #read data from serial port
-    left_serial_data = left_serial.readline().decode('utf-8')   
-    right_serial_data = right_serial.readline().decode('utf-8')
-    left_line = left_serial_data.replace("\n\r", "")
-    right_line = right_serial_data.replace("\n\r", "")
-    left_data = list(map(int, left_line.split(' ')))  #string to int list
-    right_data = list(map(int, right_line.split(' ')))
+    print("Starting...")
+    time.sleep(2)
 
-    #updating glove objects
-    left_glove.update(left_data)
-    right_glove.updata(right_data)
+    previous_r_action = None
+    previous_l_action = None
 
-    #calling respective actions
-    left_action = data.call_left_action(left_glove)
-    right_action = data.call_right_action(right_glove)
-    
-    #prevents unwanted rapid repeated action
-    if previous_left_action != 0 and left_action == previous_left_action:
-        time.sleep(.5)
-        left_action = 0
+    while True:
+        if left_ser.inWaiting() and rght_ser.inWaiting():
+            try:
+                left_raw_data = left_ser.readline().decode('utf-8')
+                rght_raw_data = rght_ser.readline().decode('utf-8')
+            except:
+                print("failed serial, ignoring")
+                continue
 
-    if previous_right_action != 0 AND right_action == previous_right_action:
-        time.sleep(.5)
-        right_action = 0
-    
-    #sends actions to arduino (prioritizes left action)
-    new_data = right_action if left_action == 0 else left_action
-    SendSerial = serial.Serial('/dev/ttyTHS1', 9600)
-    SendSerial.write(new_data.encode())
-    
+            l_line = left_raw_data.replace("\r\n", "")
+            left_data = list(map(int, l_line.split(' '))) + [2]
+            r_line = left_raw_data.replace("\r\n", "")
+            rght_data = list(map(int, r_line.split(' '))) + [2]
 
+            if len(left_data) < 15 or len(rght_data) < 15:
+                print("incorrect data, ignoring")
+                continue
+
+            left_data = Data(left_data)
+            rght_data = Data(rght_data)
+
+            if left_data.mode == 0 and rght_data.mode == 0:
+                pass
+
+            elif left_data.mode == 1 and rght_data.mode == 1:
+                left_action = actions.call_left_action(left_data)
+                rght_action = actions.call_right_action(rght_data)
+
+                '''
+                if previous_action != None and previous_action == right_action:
+                    time.sleep(.3)
+                    previous_action = None
+                    continue
+                if right_action != None:
+                    print(right_action, chr(right_action))
+                    print("Mode: ", right_glove.mode)
+                key_ser.write(chr(right_action).encode())
+                previous_action = right_action
+                '''
+
+            elif left_data.mode == 2 and rght_data.mode == 2:
+                left_pose = clf.classify_pose(left_data, right=False)
+                rght_pose = clf.classify_pose(rght_data, right=True)
+
+                if chrome_fsm.update(left_data, left_pose, clf):
+                    key_ser.write(chr("INSERT SOMETHING HERE").encode())
+
+
+if __name__ == '__main__':
+    main()
