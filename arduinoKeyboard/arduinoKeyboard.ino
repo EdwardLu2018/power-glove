@@ -6,6 +6,8 @@ SoftwareSerial jetsonSerial (2, 3); // RX, TX
 /* Keyboard report buffer */
 uint8_t buf[8] = { 0 };
 
+int mode = 0; //0 gesture, 1 mouse, 2 keyboard 
+
 void setup() {
   Serial.begin(9600);
   jetsonSerial.begin(9600);
@@ -16,13 +18,150 @@ void setup() {
 void loop() {
   if (jetsonSerial.available()) {
     byte in = jetsonSerial.read();
+    if ((in < 8) && (mode != 1)) { //if recieving a gesture and not in mouse mode - imply switch to gesture mode
+      mode = 0;
+    }
     switch(in) {
       case '0': swipeRight(); break;
       case '1': swipeLeft(); break;
       case '2': minWindow(); break;
       case '3': up(); break;
       case '4': down(); break;
-      default: break;
+      case '5': enableMouse(); break;
+      default: keyboardEntry(in); break;
+    }
+  }
+}
+
+void keyboardEntry(byte in) {
+  char ch = (char)in;
+  if ((ch < 8) || (ch > 127)) {
+    return;
+  }
+
+  //capitalize and write uppercase letters
+  byte to_write = 0;
+  if ((ch >= 65) && (ch <= 90)) {
+    buf[0] = 0;
+    buf[2] = KEY_MOD_LSHIFT;
+    Serial.write(buf, 8);
+    delay(10);
+    ch = ch - 61;
+    to_write = (byte)ch;
+    buf[0] = 0;
+    buf[2] = to_write;
+    Serial.write(buf, 8);
+    delay(10);
+    releaseKey();
+  }
+  else if ((ch >= 97) && (ch <= 122)) {
+    ch = ch - 93;
+    to_write = (byte)ch;
+    buf[0] = 0;
+    buf[2] = to_write;
+    Serial.write(buf, 8);
+    delay(10);
+    releaseKey();
+  } else {
+    if (ch == 10) {
+      buf[0] = 0;
+      buf[2] = KEY_ENTER;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 32) {
+      buf[0] = 0;
+      buf[2] = KEY_SPACE;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 8) {
+      buf[0] = 0;
+      buf[2] = KEY_BACKSPACE;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 27) {
+      buf[0] = 0;
+      buf[2] = KEY_ESC;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 46) {
+      buf[0] = 0;
+      buf[2] = KEY_DOT;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 44) {
+      buf[0] = 0;
+      buf[2] = KEY_COMMA;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 47) {
+      buf[0] = 0;
+      buf[2] = KEY_SLASH;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 60) {
+      buf[0] = 0;
+      buf[2] = KEY_MOD_LSHIFT;
+      Serial.write(buf, 8);
+      delay(10);
+      buf[0] = 0;
+      buf[2] = KEY_COMMA;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 62) {
+      buf[0] = 0;
+      buf[2] = KEY_MOD_LSHIFT;
+      Serial.write(buf, 8);
+      delay(10);
+      buf[0] = 0;
+      buf[2] = KEY_DOT;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 63) {
+      buf[0] = 0;
+      buf[2] = KEY_MOD_LSHIFT;
+      Serial.write(buf, 8);
+      delay(10);
+      buf[0] = 0;
+      buf[2] = KEY_SLASH;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 59) {
+      buf[0] = 0;
+      buf[2] = KEY_SEMICOLON;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
+    }
+    if (ch == 58) {
+      buf[0] = 0;
+      buf[2] = KEY_MOD_LSHIFT;
+      Serial.write(buf, 8);
+      delay(10);
+      buf[0] = 0;
+      buf[2] = KEY_SEMICOLON;
+      Serial.write(buf, 8);
+      delay(10);
+      releaseKey();
     }
   }
 }
@@ -50,6 +189,11 @@ void swipeLeft() {
 }
 
 void enableMouse() {
+  if (mode != 1) { //switch into mouse mode 
+    mode = 1;
+  } else { //switch into keyboard mode 
+    mode = 2;
+  }
   for (int i = 0; i < 5; i++) {
     delay(10);
     buf[0] = 0;

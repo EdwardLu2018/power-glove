@@ -4,6 +4,8 @@
 
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
+int mouse = LOW;
+
 void setup() {
   Serial.begin(9600);
   if (!mma.begin()) {
@@ -24,10 +26,22 @@ void setup() {
   pinMode(6, INPUT);
   pinMode(7, INPUT);
 
+  pinMode(2, INPUT);
+  pinMode(8, OUTPUT);
+
   delay(500);
 }
 
 void loop() {
+
+  mouse = digitalRead(2);
+
+  if (mouse == HIGH) {
+    digitalWrite(8, HIGH);
+  } else {
+    digitalWrite(8, LOW);
+  }
+  
   Serial.print(analogRead(A0));
   Serial.print(" ");
   Serial.print(analogRead(A1));
