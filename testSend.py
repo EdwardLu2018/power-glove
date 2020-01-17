@@ -21,14 +21,11 @@ while True:
             right_action = None
         continue
     try:
-
         #read data from serial port
         right_serial_data = right_serial.readline().decode('utf-8')
         right_line = right_serial_data.replace("\n\r", "")
         right_data = list(map(int, right_line.split(' '))) + [1]
-
         #updating glove objects
-
         right_glove.update(right_data)
     except:
         continue
