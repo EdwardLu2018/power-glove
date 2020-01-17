@@ -1,7 +1,6 @@
 from swipeGestureFunctions import *
 
 def getSwipeInfo(pose, data, count, tempcount, ser1, clf, right):
-    print(data.y)
     velx_data = data.x
     vely_data = data.y
     velz_data = data.z

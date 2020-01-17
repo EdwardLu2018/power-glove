@@ -8,7 +8,7 @@ right_glove = data.Data()
 left_glove = data.Data()
 
 right_serial = serial.Serial('/dev/ttyACM0', 9600)
-left_serial = serial.Serial('/dev/ttyACM1', 9600)
+left_serial = serial.Serial('/dev/ttyACM2', 9600)
 time.sleep(3)
 
 GPIO.setmode(GPIO.BOARD)
@@ -59,9 +59,10 @@ while True:
     left_action = actions.call_left_action(left_glove)
     # prioritizes right hand
     print("Right Action: ", right_action)
-    print("Left Action: ", left_action)
+    #print("Left Action: ", left_action)
     action = left_action if right_action == None else right_action
     print("Action: ", action)
+    print(left_glove.data, right_glove.data)
     if previous_action != None and previous_action == action:
         counter = 1
         previous_action = None
@@ -89,6 +90,6 @@ while True:
                 pass
             elif mode == 1:
                 print("Sending key: ", chr(action))
-                SendSerial.write(chr(action).encode())
+                #SendSerial.write(chr(action).encode())
             previous_action = action
 

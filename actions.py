@@ -35,7 +35,8 @@ def call_left_action(glove):
         glove.mode = (glove.mode + 1) % 3
     elif glove.mode == 0:
         if glove.middleTouch == 0:
-            return chr("i")
+            pass
+            #return chr("i")
         elif glove.indexTouch == 0:
             pass
             #right click

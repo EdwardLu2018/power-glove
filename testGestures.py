@@ -9,7 +9,7 @@ from getGestures import *
 
 
 def main():
-    ser1 = serial.Serial('/dev/cu.usbmodem14201', 9600)
+    ser1 = serial.Serial('/dev/ttyACM0', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
     clf = PoseClassifier()

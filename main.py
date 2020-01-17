@@ -10,8 +10,8 @@ import actions
 
 from getGestures import *
 
-LEFT_GLOVE_PORT = ''
-RGHT_GLOVE_PORT = ''
+LEFT_GLOVE_PORT = '/dev/ttyACM0'
+RGHT_GLOVE_PORT = '/dev/ttyACM1'
 KEYBOARD_PORT = '/dev/ttyTHS1'
 BAUD = 9600
 
@@ -23,6 +23,13 @@ def main():
     clf = PoseClassifier()
 
     chrome_fsm = OpenChromeFSM()
+    closeWin_fsm = CloseWindowFSM()
+    minim_fsm = MinimizeFSM()
+    ft_fsm = FacetimeFSM()
+    it_fsm = ITunesFSM()
+    ent_fsm = EnterFSM()
+    showAllWin_fsm = ShowWindowsFSM() 
+
 
     print("Starting...")
     time.sleep(2)
@@ -32,6 +39,7 @@ def main():
 
     previous_r_action = None
     previous_l_action = None
+    mode = 2
 
     while True:
         if left_ser.inWaiting() and rght_ser.inWaiting():
@@ -42,25 +50,42 @@ def main():
                 print("failed serial, ignoring")
                 continue
 
-            l_line = left_raw_data.replace("\r\n", "")
-            left_data = list(map(int, l_line.split(' '))) + [2]
-            r_line = left_raw_data.replace("\r\n", "")
-            rght_data = list(map(int, r_line.split(' '))) + [2]
+            try:
+                l_line = left_raw_data.replace("\r\n", "")
+                left_data = list(map(int, l_line.split(' '))) + [mode]
+                r_line = left_raw_data.replace("\r\n", "")
+                rght_data = list(map(int, r_line.split(' '))) + [mode]
+            except:
+                continue
 
             if len(left_data) < 15 or len(rght_data) < 15:
                 print("incorrect data, ignoring")
                 continue
-
+            
+            #print(rght_data)
             left_data = Data(left_data)
             rght_data = Data(rght_data)
-
-            if left_data.mode == 0 and rght_data.mode == 0:
+            left_data.mode = mode
+            rght_data.mode = mode
+            left_action = actions.call_left_action(left_data)
+            rght_action = actions.call_right_action(rght_data)
+            #print(left_action, rght_action) 
+            action = left_action if rght_action == None else rght_action
+            # checks mode switch
+            if action == 100:
+                mode = rght_data.mode
+                print("New Mode: ", mode)
+                left_data.mode = mode
+                continue
+            elif mode == 0:
                 pass
+            elif mode == 1:
+                if action != None:
+                    key_ser.write(chr(action).encode())
+                continue
+            elif mode == 2:
 
-            elif left_data.mode == 1 and rght_data.mode == 1:
-                left_action = actions.call_left_action(left_data)
-                rght_action = actions.call_right_action(rght_data)
-
+                
                 '''
                 if previous_action != None and previous_action == right_action:
                     time.sleep(.3)
@@ -73,32 +98,42 @@ def main():
                 previous_action = right_action
                 '''
 
-            elif left_data.mode == 2 and rght_data.mode == 2:
                 left_pose = clf.classify_pose(left_data, right=False)
                 rght_pose = clf.classify_pose(rght_data, right=True)
+                #print(rght_data.x)
+            
+                rght_swipeInfo = getSwipeInfo(rght_pose, rght_data, count, tempcount, rght_ser, clf, True)
+                left_swipeInfo = getSwipeInfo(left_pose, left_data, count, tempcount, left_ser, clf, False)
 
-                rght_swipeInfo = getSwipeInfo(rght_pose, rght_data, count, tempcount, rght_ser, clf)
-                left_swipeInfo = getSwipeInfo(left_pose, left_data, count, tempcount, left_ser, clf)
-                
-                rhgt_swipeDir = rhgt_swipeInfo[0]
-                rhgt_swipeDir = left_swipeInfo[0]
+                rght_swipeDir = rght_swipeInfo[0]
+                left_swipeDir = left_swipeInfo[0]
+
+                #print(rght_swipeDir, left_swipeDir)
                 
                 if rght_swipeDir != None:
                     #serial send right hand gesture
                     if rght_swipeDir == "SWIPE UP":
                         key_ser.write(chr(3).encode())
                     elif rght_swipeDir == "SWIPE DOWN":
-                        key_ser.write(chr(4).encode())
+                        key_ser.write(chr(129).encode())
+                    elif rght_swipeDir == "SWIPE RIGHT":
+                        key_ser.write(chr(0).encode())
+                    elif rght_swipeDir == "SWIPE LEFT":
+                        key_ser.write(chr(1).encode())
                     elif rght_swipeDir == "volume up":
                         key_ser.write(chr(133).encode())
                     elif rght_swipeDir == "volume down":
                         key_ser.write(chr(134).encode())
                     tempcount = rght_swipeInfo[1]
-                elif left_swipeDir != None:
+                if left_swipeDir != None:
                     if left_swipeDir == "SWIPE UP":
                         key_ser.write(chr(3).encode())
                     elif left_swipeDir == "SWIPE DOWN":
-                        key_ser.write(chr(4).encode())
+                        key_ser.write(chr(129).encode())
+                    elif rght_swipeDir == "SWIPE RIGHT":
+                        key_ser.write(chr(0).encode())
+                    elif rght_swipeDir == "SWIPE LEFT":
+                        key_ser.write(chr(1).encode())
                     elif left_swipeDir == "volume up":
                         key_ser.write(chr(133).encode())
                     elif left_swipeDir == "volume down":
@@ -106,36 +141,37 @@ def main():
                     #serial send left hand gesture
                     tempcount = left_swipeInfo[1]
                 
-
-                if OpenChromeFSM.update(left_data, left_pose, clf):
+            
+                if chrome_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(6).encode())
-                elif CloseWindowFSM.update(left_data, left_pose, clf):
+                elif closeWin_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(7).encode())
-                elif MinimizeFSM.update(left_data, left_pose, clf):
+                elif minim_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(2).encode())
-                elif FaceTimeFSM.update(left_data, left_pose, clf):
+                elif ft_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(130).encode())
-                elif ITunesFSM.update(left_data, left_pose, clf):
+                elif it_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(131).encode())
-                elif EnterFSM.update(left_data, left_pose, clf):
+                elif ent_fsm.update(left_data, left_pose, clf):
                     key_ser.write(chr(132).encode())
-                elif ShowWindowsFSM.update(left_data,left_pose, clf):
+                elif showAllWin_fsm.update(left_data,left_pose, clf):
                     key_ser.write(chr(129).encode())
-                elif OpenChromeFSM.update(rght_data, rght_pose, clf):
+                '''
+                elif chrome_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(6).encode())
-                elif CloseWindowFSM.update(rght_data, rght_pose, clf):
+                elif closeWin_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(7).encode())
-                elif MinimizeFSM.update(rght_data, rght_pose, clf):
+                elif minim_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(2).encode())
-                elif FaceTimeFSM.update(rght_data, rght_pose, clf):
+                elif ft_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(130).encode())
-                elif ITunesFSM.update(rght_data, rght_pose, clf):
+                elif it_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(131).encode())
-                elif EnterFSM.update(rght_data, rght_pose, clf):
+                elif ent_fsm.update(rght_data, rght_pose, clf):
                     key_ser.write(chr(132).encode())
-                elif ShowWindowsFSM.update(rght_data,rght_pose, clf):
+                elif showAllWin_fsm.update(rght_data,rght_pose, clf):
                     key_ser.write(chr(129).encode())
-
+'''
 
 if __name__ == '__main__':
     main()

@@ -3,12 +3,14 @@ def detectSwipe(orient, velx, vely, velz, serial, right):
     if not right:
          #swipe down
         if (vely > 400): #and (orient == 0 or orient == 6) ):
+            print(vely)
             return "SWIPE DOWN"
         elif(vely < -1500): #and (orient == 1 or orient == 7)):
             return "SWIPE UP"
     else:
         #swipe down
         if (vely < -400): #and (orient == 0 or orient == 6) ):
+            print(vely)            
             return "SWIPE DOWN"
         elif(vely > 1500): #and (orient == 1 or orient == 7)):
             return "SWIPE UP"

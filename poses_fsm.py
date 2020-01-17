@@ -7,7 +7,6 @@ class OpenChromeFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.OK:
                 self.curr_state = self.ok
@@ -29,7 +28,6 @@ class CloseWindowFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.GUN:
                 self.curr_state = self.gun
@@ -51,7 +49,6 @@ class MinimizeFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.MIDDLE:
                 self.curr_state = self.middle
@@ -73,7 +70,6 @@ class FacetimeFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.CALI:
                 self.curr_state = self.cali
@@ -95,7 +91,6 @@ class ITunesFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.ROCK:
                 self.curr_state = self.rock
@@ -117,7 +112,6 @@ class EnterFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.THUMB:
                 self.curr_state = self.thumb
@@ -140,7 +134,6 @@ class ShowWindowsFSM(object):
         self.curr_state = 0
 
     def update(self, data, pose, clf):
-        print(pose, self.curr_state)
         if self.curr_state == self.idle:
             if pose == clf.FIST:
                 self.curr_state = self.fist
