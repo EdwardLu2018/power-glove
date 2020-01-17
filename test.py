@@ -113,29 +113,29 @@ def main():
                 left_swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
                 rght_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
 
-                if pose)== OPEN:
+                if pose== OPEN:
                     print("left hand open")
-                elif pose)== NEUTRAL:
+                elif pose== NEUTRAL:
                     print("left hand in neutral position")
-                elif pose)== FIST:
+                elif pose== FIST:
                     print("left hand fist")
-                elif pose)== ONE:
+                elif pose== ONE:
                     print("left hand one")
-                elif pose)== TWO:
+                elif pose== TWO:
                     print("left hand two")
-                elif pose)== THREE:
+                elif pose== THREE:
                     print("left hand three")
-                elif pose)== FOUR:
+                elif pose== FOUR:
                     print("left hand four")
-                elif pose)== MIDDLE:
+                elif pose== MIDDLE:
                     print("left hand middle finger")
-                elif pose)== ROCK:
+                elif pose== ROCK:
                     print("left hand rock and roll")
-                elif pose)== CALI:
+                elif pose== CALI:
                     print("left hand surfs up")
-                elif pose)== THUMB:
+                elif pose== THUMB:
                     print("left hand thumbs up")
-                elif pose)== GUN:
+                elif pose== GUN:
                     print("left hand pew pew")
 
                 if pose2 == OPEN:
