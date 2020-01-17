@@ -5,8 +5,14 @@ from sklearn.svm import SVC
 import numpy as np
 import pickle
 
+L_FILENAME = "left_flex_data.txt"
+R_FILENAME = "rght_flex_data.txt"
+
+L_PICKLE = 'left_glove_classifier.pkl'
+R_PICKLE = 'rght_glove_classifier.pkl'
+
 if __name__ == '__main__':
-    data = np.loadtxt('left_flex_data.txt', delimiter=' ')
+    data = np.loadtxt(R_FILENAME, delimiter=' ')
     np.random.shuffle(data)
 
     X, y = data[:,1:], data[:,0]
@@ -53,5 +59,5 @@ if __name__ == '__main__':
         print(classification_report(y_true, y_pred))
         print()
 
-    with open('left_glove_classifier.pkl', 'wb') as file:
+    with open(R_PICKLE, 'wb') as file:
         pickle.dump(clf, file)

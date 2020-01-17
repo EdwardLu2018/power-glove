@@ -2,7 +2,8 @@ import serial, time
 import numpy as np
 from data import Data
 
-FILENAME = "left_flex_data.txt"
+L_FILENAME = "left_flex_data.txt"
+R_FILENAME = "rght_flex_data.txt"
 
 OPEN = '0'
 FIST = '1'
@@ -28,7 +29,7 @@ def main():
     ser1 = serial.Serial('/dev/cu.usbmodem142201', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
-    data_file = open(FILENAME, "a")
+    data_file = open(R_FILENAME, "a")
     time.sleep(1)
 
     for i in range(20):
@@ -43,7 +44,7 @@ def main():
             # data = np.fromstring(line, dtype=int, sep=" ")
 
             # print(line.split(" "))
-            data = str_to_list(line)
+            data = str_to_list(line) + [1]
             # print(data)
 
             if len(data) < 15:
@@ -54,7 +55,7 @@ def main():
             flex_data = data.flex_data()
             print(flex_data)
 
-            data_file.write(TWO + " " + list_to_str(flex_data) + "\n")
+            data_file.write(GUN + " " + list_to_str(flex_data) + "\n")
         time.sleep(0.1)
 
 if __name__ == '__main__':
