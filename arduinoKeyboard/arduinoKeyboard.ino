@@ -37,8 +37,6 @@ void loop() {
       case 132: enter(); break;
       case 133: volumeUp(); break;
       case 134: volumeDown(); break;
-      case 135: brightUp(); break;
-      case 136: brightDown(); break;
       default: keyboardEntry(in); break;
     }
   }
@@ -285,32 +283,163 @@ void openChrome(){
   delay(10);
   Serial.write(buf, 8);
   releaseKey();
-  
   }
 
 //Command Q
 void closeWindow(){
-  
-  
+  buf[0] = 0;
+  buf[2] = KEY_LEFTMETA; 
+  Serial.write(buf, 8);
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_Q; 
+  Serial.write(buf, 8);
+  releaseKey();
   }
 
 //Control Down
 void showAllWin(){
-  
-  
+  buf[0] = 0;
+  buf[2] = KEY_LEFTCTRL; 
+  Serial.write(buf, 8);
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_DOWN; 
+  Serial.write(buf, 8);
+  releaseKey();
   }
 
 //Command Space bar then type faceTime
 void faceTime(){
-  
-  
+  buf[0] = 0;
+  buf[2] = KEY_LEFTMETA; 
+  Serial.write(buf, 8);
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_SPACE; 
+  Serial.write(buf, 8);
+  releaseKey();
+  //CHROME
+  buf[0] = 0;
+  buf[2] = KEY_F; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_A; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_C; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_E; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_T; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_I; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_M; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_E; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_ENTER; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
   }
   
 //Command Space bar then type iTunes
 void iTunes(){
-  
-  
+  buf[0] = 0;
+  buf[2] = KEY_LEFTMETA; 
+  Serial.write(buf, 8);
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_SPACE; 
+  Serial.write(buf, 8);
+  releaseKey();
+  //CHROME
+  buf[0] = 0;
+  buf[2] = KEY_I; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_T; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_U; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_N; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_E; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_S; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_ENTER; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
   }
+void enter() {
+  buf[0] = 0;
+  buf[2] = KEY_ENTER; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  }
+
+void volumeUp() {
+  buf[0] = 0;
+  buf[2] = KEY_MEDIA_VOLUMEUP; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+}
+
+void volumeDown() {
+  buf[0] = 0;
+  buf[2] = KEY_MEDIA_VOLUMEDOWN; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+}
   
 void releaseKey() {
   buf[0] = 0;
