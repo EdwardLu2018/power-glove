@@ -46,7 +46,6 @@ def main():
             if chrome_fsm.update(data, pose, clf):
                 print("did it")
 
-
         # time.sleep(0.25)
 
 if __name__ == '__main__':
