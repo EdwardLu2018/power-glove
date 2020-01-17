@@ -28,6 +28,17 @@ void loop() {
       case 3: up(); break;
       case 4: down(); break;
       case 5: enableMouse(); break;
+      //Sophia's adding more gestures
+      case 6: openChrome(); break;
+      case 7: closeWindow(); break;
+      case 129: showAllWin(); break;
+      case 130: faceTime(); break;
+      case 131: iTunes(); break;
+      case 132: enter(); break;
+      case 133: volumeUp(); break;
+      case 134: volumeDown(); break;
+      case 135: brightUp(); break;
+      case 136: brightDown(); break;
       default: keyboardEntry(in); break;
     }
   }
@@ -228,6 +239,79 @@ void down() {
   releaseKey();
 }
 
+void openChrome(){
+  buf[0] = 0;
+  buf[2] = KEY_LEFTMETA; 
+  Serial.write(buf, 8);
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_SPACE; 
+  Serial.write(buf, 8);
+  releaseKey();
+  //CHROME
+  buf[0] = 0;
+  buf[2] = KEY_C; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_H; 
+  Serial.write(buf, 8);
+  delay(10);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_R; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_O; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_M; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  buf[0] = 0;
+  buf[2] = KEY_E; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  delay(10);
+  buf[0] = 0;
+  buf[2] = KEY_ENTER; 
+  delay(10);
+  Serial.write(buf, 8);
+  releaseKey();
+  
+  }
+
+//Command Q
+void closeWindow(){
+  
+  
+  }
+
+//Control Down
+void showAllWin(){
+  
+  
+  }
+
+//Command Space bar then type faceTime
+void faceTime(){
+  
+  
+  }
+  
+//Command Space bar then type iTunes
+void iTunes(){
+  
+  
+  }
+  
 void releaseKey() {
   buf[0] = 0;
   buf[2] = KEY_NONE; // Release key
