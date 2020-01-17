@@ -11,6 +11,7 @@ from getGestures import *
 def main():
     ser1 = serial.Serial('/dev/ttyACM0', 9600)
     ser2 = serial.Serial('/dev/ttyACM1', 9600)
+    key_ser = serial.Serial('/dev/ttyTSH1', 9600)
 
     clf = PoseClassifier()
 
@@ -50,11 +51,11 @@ def main():
             pose = clf.classify_pose(data, right = False)
             pose2 = clf.classify_pose(data2, right= True)
 
-            swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
-            swipeDir2, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
+            left_swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
+            right_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
 
-        
-            print(swipeDir, swipeDir2)
+
+            print(left_swipeDir, right_swipeDir)
             if rght_swipeDir != None:
             #serial send right hand gesture
                 if rght_swipeDir == "SWIPE UP":
@@ -83,8 +84,6 @@ def main():
                 elif left_swipeDir == "volume down":
                     key_ser.write(chr(134).encode())
                 #serial send left hand gesture
-                
- 
         # time.sleep(0.25)
 
 if __name__ == '__main__':
