@@ -27,28 +27,29 @@ def main():
     time.sleep(1)
 
     for i in range(20):
-        try:
-            raw_data = ser1.readline().decode('utf-8')
-        except:
-            print("failed serial, ignoring")
-            continue
+        if ser1.inWaiting() > 0:
+            try:
+                raw_data = ser1.readline().decode('utf-8')
+            except:
+                print("failed serial, ignoring")
+                continue
 
-        line = raw_data.replace("\r\n", "")
-        # data = np.fromstring(line, dtype=int, sep=" ")
+            line = raw_data.replace("\r\n", "")
+            # data = np.fromstring(line, dtype=int, sep=" ")
 
-        # print(line.split(" "))
-        data = str_to_list(line)
-        # print(data)
+            # print(line.split(" "))
+            data = str_to_list(line)
+            # print(data)
 
-        if len(data) < 14:
-            print("incorrect data, ignoring")
-            continue
+            if len(data) < 14:
+                print("incorrect data, ignoring")
+                continue
 
-        data = Data(list(data))
-        flex_data = data.flex_data()
-        print(flex_data)
+            data = Data(list(data))
+            flex_data = data.flex_data()
+            print(flex_data)
 
-        data_file.write(FIST + " " + list_to_str(flex_data)) + "\n")
+            data_file.write(FIST + " " + list_to_str(flex_data)) + "\n")
         time.sleep(0.25)
 
 if __name__ == '__main__':

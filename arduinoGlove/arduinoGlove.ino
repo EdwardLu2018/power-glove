@@ -58,10 +58,12 @@ void loop() {
 
   Serial.print(int(event.acceleration.x * 100));
   Serial.print(" ");
-  Serial.print(int(event.acceleration.y* 100)); 
+  Serial.print(int(event.acceleration.y * 100)); 
   Serial.print(" ");
-  Serial.print(int(event.acceleration.z* 100)); 
+  Serial.print(int(event.acceleration.z * 100)); 
   Serial.print(" ");
   Serial.print(mma.getOrientation());
   Serial.println();
+
+  delay(10);
 }
