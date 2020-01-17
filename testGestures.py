@@ -38,24 +38,15 @@ def main():
             data = Data(list(data))
             flex_data = [data.flex_data()]
             flex_data = data.flex_data()
-            velx_data = data.x
-            vely_data = data.y
-            velz_data = data.z
-            orientation = data.orientation
+
             count+=1
 
             pose = clf.classify_pose(data, right = False)
-
-            swipevert = (detectSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None)
-            swipeside = (detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None )
-            if (tempcount < count - 10):
-                print(pose, velx_data,vely_data, velz_data, orientation)
-                if (swipeside or swipevert) and not (swipeside and swipevert) and (pose == clf.NEUTRAL or pose == clf.OPEN):
-                    if (swipevert):
-                        print(detectSwipe(orientation, velx_data, vely_data, velz_data, ser1))
-                    else:
-                        print(detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1))
-                    tempcount = count
+            
+            swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1)
+            swipeDir = swipeInfor[0]
+            tempcount = swipeInfo[1]
+           
 
         # time.sleep(0.25)
 
