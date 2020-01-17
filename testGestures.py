@@ -8,7 +8,7 @@ from pose_classifier import PoseClassifier
 
 
 def main():
-    ser1 = serial.Serial('/dev/cu.usbmodem14301', 9600)
+    ser1 = serial.Serial('/dev/cu.usbmodem14201', 9600)
     #ser2 = serial.Serial('/dev/ttyACM1', 9600)
 
     clf = PoseClassifier()
@@ -43,21 +43,20 @@ def main():
             velz_data = data.z
             orientation = data.orientation
             count+=1
-            
+
+            pose = clf.classify_pose(data, right = False)
+
             swipevert = (detectSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None)
             swipeside = (detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1) != None )
             if (tempcount < count - 10):
                 #print((velx_data,vely_data, velz_data, orientation, detectSwipe(orientation, velx_data, vely_data, velz_data, ser1), detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1)))
-                if (swipeside or swipevert) and not (swipeside and swipevert):
+                if (swipeside or swipevert) and not (swipeside and swipevert) and (pose == clf.NEUTRAL or pose == clf.OPEN):
                     if (swipevert):
                         print(detectSwipe(orientation, velx_data, vely_data, velz_data, ser1))
                     else:
                         print(detectLRSwipe(orientation, velx_data, vely_data, velz_data, ser1))
                     tempcount = count
-           
-            #print(flex_data)
 
-            print(clf.classify_pose(data, right = False))
         # time.sleep(0.25)
 
 if __name__ == '__main__':
