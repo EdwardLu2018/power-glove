@@ -6,6 +6,24 @@ from swipeGestureFunctions import *
 from utils import *
 from pose_classifier import PoseClassifier
 from getGestures import *
+from poses_fsm import *
+import actions
+
+
+OPEN = '0'
+FIST = '1'
+ONE = '2'
+TWO = '3'
+THREE = '4'
+FOUR = '5'
+MIDDLE = '6'
+OK = '7'
+ROCK ='8'
+NEUTRAL = '9'
+CALI = '10'
+THUMB = '11'
+GUN = '12'
+
 
 
 def main():
@@ -49,7 +67,7 @@ def main():
                 # print(line.split(" "))
                 data = str_to_list(line) + [mode]
                 data2 = str_to_list(line2) + [mode]
-                # print(data)
+                #print(data)
 
             except:
                 print("failed serial, ignoring")
@@ -94,11 +112,14 @@ def main():
 
                 left_swipeDir, tempcount = getSwipeInfo(pose, data, count, tempcount, ser1, clf, False)
                 rght_swipeDir, tempcount = getSwipeInfo(pose2, data2, count, tempcount, ser1, clf, True)
-
-
+                
+                if str(pose) == OPEN:
+                    print("left hand open")
+                elif 
+                
                 #print(left_swipeDir, rght_swipeDir)
                 if rght_swipeDir != None:
-                    print("right ges")
+                    #print("right ges")
                     #serial send right hand gesture
                     if rght_swipeDir == "SWIPE UP":
                         key_ser.write(chr(3).encode())
@@ -113,7 +134,7 @@ def main():
                     elif rght_swipeDir == "volume down":
                         key_ser.write(chr(134).encode())
                 elif left_swipeDir != None:
-                    print("left ges")
+                    #print("left ges")
                     if left_swipeDir == "SWIPE UP":
                         key_ser.write(chr(3).encode())
                     elif left_swipeDir == "SWIPE DOWN":
@@ -128,7 +149,9 @@ def main():
                         key_ser.write(chr(134).encode())
                     #serial send left hand gesture
             # time.sleep(0.25)
-
+                left_pose = pose
+                right_pose = pose2
+                print(pose, pose2)
                 if chrome_fsm.update(data, left_pose, clf):
                     key_ser.write(chr(6).encode())
                 elif closeWin_fsm.update(data, left_pose, clf):
