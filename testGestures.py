@@ -29,7 +29,7 @@ def main():
             # data = np.fromstring(line, dtype=int, sep=" ")
 
             # print(line.split(" "))
-            data = str_to_list(line)
+            data = str_to_list(line) + [1]
             # print(data)
 
             if len(data) < 15:
@@ -42,9 +42,9 @@ def main():
 
             count+=1
 
-            pose = clf.classify_pose(data, right = False)
+            pose = clf.classify_pose(data, right = True)
 
-            swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1, clf)
+            swipeInfo = getSwipeInfo(pose, data, count, tempcount, ser1, clf, True)
             swipeDir = swipeInfo[0]
             tempcount = swipeInfo[1]
 
