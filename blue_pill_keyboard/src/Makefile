@@ -59,6 +59,9 @@ $(BINARY).elf: $(OBJ)
 clean:	host_clean
 	-$(Q)$(RM) -f *.o *.d *~ *.elf *.bin $(HOSTFILES)
 
+flash:
+	st-flash --reset write ./$(BINARY).bin 0x08000000
+
 openocd:
 	openocd -f openocd.cfg
 

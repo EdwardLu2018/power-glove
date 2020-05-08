@@ -5,12 +5,10 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/hid.h>
+
 #include "hid.h"
 
 static usbd_device *usbd_dev;
-
-/* Buffer to be used for control requests. */
-uint8_t usbd_control_buffer[128];
 
 static const char *usb_strings[] = {
     "Build18 Technologies",
@@ -43,7 +41,7 @@ const struct usb_device_descriptor dev_descr = {
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
     .bMaxPacketSize0 = 64,
-    .idVendor = 0x05ac,     // set vendor to Apple Inc. to get rid of keyboard verification window
+    .idVendor = 0x05ac,     // set vendor to Apple Inc. to get rid of keyboard verification window on macs
     .idProduct = 0x2227,    // same as above
     .bcdDevice = 0x0200,
     .iManufacturer = 1,
@@ -51,6 +49,9 @@ const struct usb_device_descriptor dev_descr = {
     .iSerialNumber = 3,
     .bNumConfigurations = 1,
 };
+
+/* Buffer to be used for control requests. */
+uint8_t usbd_control_buffer[128];
 
 int main(void) {
 	rcc_clock_setup_in_hsi_out_48mhz();
@@ -61,7 +62,7 @@ int main(void) {
 	gpio_set(GPIOC, GPIO13);
 
 	usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &config,
-						 usb_strings, 3,
+						 usb_strings, sizeof(usb_strings)/sizeof(char *),
 						 usbd_control_buffer, sizeof(usbd_control_buffer));
 	usbd_register_set_config_callback(usbd_dev, hid_set_config);
 
@@ -72,21 +73,22 @@ int main(void) {
 void sys_tick_handler(void) {
 	static int x = 0;
 	static int dir = 1;
-	uint8_t buf[4] = {0, 0, 0, 0};
+	uint8_t buf[5] = {REPORT_ID_MOUSE, 0, 0, 0, 0};
 
-	//     Byte | D7      D6      D5      D4      D3      D2      D1      D0
- 	//    ------+---------------------------------------------------------------------
- 	//      0   |  0       0       0    Forward  Back    Middle  Right   Left (Button)
- 	//      1   |                             X
- 	//      2   |                             Y
- 	//      3   |                       Vertical Wheel
+	/* Byte | D7      D6      D5      D4      D3      D2      D1      D0
+ 	 * -------------------------------------------------------------------
+ 	 *   0  |  0       0       0    Forward  Back    Middle  Right   Left (Button)
+ 	 *   1  |                             X
+ 	 *   2  |                             Y
+ 	 *   3  |                       Vertical Wheel
+ 	 */
 
-	buf[2] = dir;
+	buf[3] = dir;
 	x += dir;
 	if (x > 100)
 		dir = -dir;
 	if (x < -100)
 		dir = -dir;
 
-	usbd_ep_write_packet(usbd_dev, 0x81, buf, 4);
+	usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
 }
