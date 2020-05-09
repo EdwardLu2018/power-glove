@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-// id, modifiers, reserved, keys[6], leds
+// report id, modifiers, reserved, keys[6], leds
 
 #define KEY_MOD_LCTRL  0x01
 #define KEY_MOD_LSHIFT 0x02

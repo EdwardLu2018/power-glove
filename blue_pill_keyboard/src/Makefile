@@ -5,7 +5,7 @@ endif
 
 BINARY = pg_hid
 
-OPT_FLAGS ?= -O2
+OPT_FLAGS ?= -O3
 
 CFLAGS += -Wall -Wextra -Wno-char-subscripts\
 	$(OPT_FLAGS) -std=gnu99 -g3 -MD \
