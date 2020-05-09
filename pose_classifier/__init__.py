@@ -16,8 +16,8 @@ class PoseClassifier(object):
         self.THUMB = 11
         self.GUN = 12
 
-        self.L_PICKLE = 'left_glove_classifier.pkl'
-        self.R_PICKLE = 'rght_glove_classifier.pkl'
+        self.L_PICKLE = 'pose_classifier/left_glove_classifier.pkl'
+        self.R_PICKLE = 'pose_classifier/rght_glove_classifier.pkl'
 
     def classify_pose(self, data, right=False):
         flex_data = data.flex_data()
