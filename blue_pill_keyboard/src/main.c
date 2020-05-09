@@ -63,17 +63,10 @@ uint8_t usbd_control_buffer[128];
 
 int main(void) {
 	rcc_clock_setup_in_hsi_out_48mhz();
-	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOC);
-
-	// trigger device re-enumeration on startup. kind of a hack
-	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO12);
-	gpio_clear(GPIOA, GPIO12);
 
 	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
 	gpio_set(GPIOC, GPIO13);
-
-	for (unsigned i = 0; i < 800000; i++) __asm__("nop");
 
 	usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &config,
 						 usb_strings, sizeof(usb_strings)/sizeof(char *),
@@ -113,7 +106,12 @@ static uint16_t keyboard_press(uint8_t key) {
 	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
 }
 
+int idx = 0;
+int keys[6] = {KEY_H, KEY_E, KEY_L, KEY_L, KEY_O, KEY_SPACE};
+volatile uint32_t system_millis;
 void sys_tick_handler(void) {
+	++system_millis;
+
 	// static int x = 0;
 	// static int by = 1;
 	// x += by;
@@ -130,9 +128,9 @@ void sys_tick_handler(void) {
 	// for (int i = 0; i < 10000; ++i) __asm__("nop");
 	// mouse_click(0x0);
 
-	keyboard_press(KEY_A);
-	// keyboard_press(KEY_NONE);
-	for (int i = 0; i < 800000; ++i) __asm__("nop");
-
-	gpio_toggle(GPIOC, GPIO13);
+	if (system_millis % 1000 == 0) {
+		keyboard_press(keys[(idx++) % 6]);
+		gpio_toggle(GPIOC, GPIO13);
+		usbd_ep_write_packet(usbd_dev, 0x81, NULL, 0);
+	}
 }
