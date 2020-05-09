@@ -1,11 +1,14 @@
+#ifndef HID_H
+#define HID_H
+
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/hid.h>
 
 extern struct usb_interface_descriptor hid_iface;
 extern void hid_set_config(usbd_device *dev, uint16_t wValue);
 
-#define REPORT_ID_KEYBOARD  1
-#define REPORT_ID_MOUSE     2
+#define KEYBOARD_REPORT_ID  1
+#define MOUSE_REPORT_ID     2
 
 static const uint8_t hid_report_descriptor[] = {
     0x05, 0x01,        // Usage Page (Generic Desktop)
@@ -22,9 +25,9 @@ static const uint8_t hid_report_descriptor[] = {
     0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
     0x81, 0x01,        //   Input (Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position)
     0x19, 0x00,        //   Usage Minimum (0x00)
-    0x29, 0x65,        //   Usage Maximum (0x65)
+    0x29, 0xfb,        //   Usage Maximum (0xfb)
     0x15, 0x00,        //   Logical Minimum (0)
-    0x25, 0x65,        //   Logical Maximum (101)
+    0x25, 0xfb,        //   Logical Maximum (101)
     0x75, 0x08,        //   Report Size (8)
     0x95, 0x06,        //   Report Count (6)
     0x81, 0x00,        //   Input (Data,Array,Abs,No Wrap,Linear,Preferred State,No Null Position)
@@ -79,3 +82,5 @@ static const uint8_t hid_report_descriptor[] = {
     0xB1, 0x01,        //   Feature (Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile)
     0xC0,              // End Collection
 };
+
+#endif

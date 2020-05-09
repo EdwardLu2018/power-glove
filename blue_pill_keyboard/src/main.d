@@ -37,4 +37,4 @@ main.o: main.c \
  ../libopencm3/include/libopencm3/stm32/common/gpio_common_all.h \
  ../libopencm3/include/libopencm3/usb/usbd.h \
  ../libopencm3/include/libopencm3/usb/usbstd.h \
- ../libopencm3/include/libopencm3/usb/hid.h hid.h
+ ../libopencm3/include/libopencm3/usb/hid.h hid.h mouse.h keyboard.h

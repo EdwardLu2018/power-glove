@@ -7,6 +7,8 @@
 #include <libopencm3/usb/hid.h>
 
 #include "hid.h"
+#include "mouse.h"
+#include "keyboard.h"
 
 static usbd_device *usbd_dev;
 
@@ -41,7 +43,7 @@ const struct usb_device_descriptor dev_descr = {
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
     .bMaxPacketSize0 = 64,
-    .idVendor = 0x05ac,     // set vendor to Apple Inc. to get rid of keyboard verification window on macs
+    .idVendor = 0x05ac,     // set vendor to Apple Inc to get rid of keyboard verification on macs
     .idProduct = 0x2227,    // same as above
     .bcdDevice = 0x0200,
     .iManufacturer = 1,
@@ -70,25 +72,55 @@ int main(void) {
 		usbd_poll(usbd_dev);
 }
 
+static uint16_t mouse_move_x_by(uint8_t by) {
+	uint8_t buf[5] = {MOUSE_REPORT_ID, 0, by, 0, 0};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
+}
+
+static uint16_t mouse_move_y_by(uint8_t by) {
+	uint8_t buf[5] = {MOUSE_REPORT_ID, 0, 0, by, 0};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
+}
+
+static uint16_t mouse_click(uint8_t type) {
+	uint8_t buf[5] = {MOUSE_REPORT_ID, type, 0, 0, 0};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
+}
+
+static uint16_t mouse_scroll(uint8_t by) {
+	uint8_t buf[5] = {MOUSE_REPORT_ID, 0, 0, 0, by};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
+}
+
+static uint16_t keyboard_press(uint8_t character) {
+	uint8_t buf[10] = {KEYBOARD_REPORT_ID, 0, 1, character, 0, 0, 0, 0, 0, 0};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 10);
+}
+
+static uint16_t keyboard_release() {
+	uint8_t buf[10] = {KEYBOARD_REPORT_ID, 0, 1, KEY_NONE, 0, 0, 0, 0, 0, 0};
+	return usbd_ep_write_packet(usbd_dev, 0x81, buf, 10);
+}
+
 void sys_tick_handler(void) {
-	static int x = 0;
-	static int dir = 1;
-	uint8_t buf[5] = {REPORT_ID_MOUSE, 0, 0, 0, 0};
+	// static int x = 0;
+	// static int by = 1;
+	// x += by;
+	// if (x > 100)
+	// 	by = -by;
+	// if (x < -100)
+	// 	by = -by;
+	// mouse_move_by(by);
 
-	/* Byte | D7      D6      D5      D4      D3      D2      D1      D0
- 	 * -------------------------------------------------------------------
- 	 *   0  |  0       0       0    Forward  Back    Middle  Right   Left (Button)
- 	 *   1  |                             X
- 	 *   2  |                             Y
- 	 *   3  |                       Vertical Wheel
- 	 */
+	// mouse_scroll(-5);
 
-	buf[3] = dir;
-	x += dir;
-	if (x > 100)
-		dir = -dir;
-	if (x < -100)
-		dir = -dir;
+	mouse_click(LEFT_CLICK);
+	for (int i = 0; i < 10000; i++) __asm__("nop");
+	mouse_click(0x0);
 
-	usbd_ep_write_packet(usbd_dev, 0x81, buf, 5);
+	// keyboard_press(KEY_A);
+	// for (int i=0; i < 100000; i++);
+	// keyboard_release();
+
+	gpio_toggle(GPIOC, GPIO13);
 }
