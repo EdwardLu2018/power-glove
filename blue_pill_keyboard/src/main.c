@@ -101,36 +101,18 @@ static uint16_t keyboard_press(uint8_t key) {
 	uint8_t report[9] = {0};
 	report[0] = KEYBOARD_REPORT_ID;
 	report[1] = 0;
-	report[2] = 0;
+	report[2] = 1;
 	report[3] = key;
 	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
 }
 
-int idx = 0;
-int keys[6] = {KEY_H, KEY_E, KEY_L, KEY_L, KEY_O, KEY_SPACE};
-volatile uint32_t system_millis;
+static int idx = 0;
+static int keys[6] = {KEY_H, KEY_E, KEY_L, KEY_L, KEY_O, KEY_SPACE};
+volatile uint32_t system_millis = 0;
 void sys_tick_handler(void) {
-	++system_millis;
-
-	// static int x = 0;
-	// static int by = 1;
-	// x += by;
-	// if (x > 100)
-	// 	by = -by;
-	// if (x < -100)
-	// 	by = -by;
-	// mouse_move_by(by);
-
-	// mouse_scroll(-1); // negative is up
-	// for (int i = 0; i < 10000; ++i) __asm__("nop");
-
-	// mouse_click(LEFT_CLICK);
-	// for (int i = 0; i < 10000; ++i) __asm__("nop");
-	// mouse_click(0x0);
-
-	if (system_millis % 1000 == 0) {
+	if (++system_millis % 175 == 0) {
 		keyboard_press(keys[(idx++) % 6]);
 		gpio_toggle(GPIOC, GPIO13);
-		usbd_ep_write_packet(usbd_dev, 0x81, NULL, 0);
+		keyboard_press(KEY_NONE);
 	}
 }
