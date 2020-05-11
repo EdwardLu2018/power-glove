@@ -16,25 +16,26 @@ main.o: main.c \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/cdefs.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/stdlib.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/alloca.h \
- ../libopencm3/include/libopencm3/cm3/nvic.h \
+ ../libopencm3/include/libopencm3/stm32/rcc.h \
  ../libopencm3/include/libopencm3/cm3/common.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h \
- ../libopencm3/include/libopencm3/cm3/memorymap.h \
- ../libopencm3/include/libopencm3/dispatch/nvic.h \
- ../libopencm3/include/libopencm3/stm32/f1/nvic.h \
- ../libopencm3/include/libopencm3/cm3/systick.h \
- ../libopencm3/include/libopencm3/stm32/rcc.h \
  ../libopencm3/include/libopencm3/stm32/memorymap.h \
  ../libopencm3/include/libopencm3/stm32/f1/memorymap.h \
+ ../libopencm3/include/libopencm3/cm3/memorymap.h \
  ../libopencm3/include/libopencm3/stm32/f1/rcc.h \
  ../libopencm3/include/libopencm3/stm32/common/rcc_common_all.h \
  ../libopencm3/include/libopencm3/stm32/gpio.h \
  ../libopencm3/include/libopencm3/stm32/f1/gpio.h \
  ../libopencm3/include/libopencm3/stm32/common/gpio_common_all.h \
- ../libopencm3/include/libopencm3/usb/usbd.h \
- ../libopencm3/include/libopencm3/usb/usbstd.h \
- ../libopencm3/include/libopencm3/usb/hid.h hid.h mouse.h keyboard.h
+ ../libopencm3/include/libopencm3/stm32/usart.h \
+ ../libopencm3/include/libopencm3/stm32/f1/usart.h \
+ ../libopencm3/include/libopencm3/stm32/common/usart_common_f124.h \
+ ../libopencm3/include/libopencm3/stm32/common/usart_common_all.h \
+ ../libopencm3/include/libopencm3/cm3/nvic.h \
+ ../libopencm3/include/libopencm3/dispatch/nvic.h \
+ ../libopencm3/include/libopencm3/stm32/f1/nvic.h \
+ ../libopencm3/include/libopencm3/cm3/systick.h

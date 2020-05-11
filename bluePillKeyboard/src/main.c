@@ -1,14 +1,12 @@
 /*
  * Turns an STM32F103 device into an HID keyboard and mouse
- *
- * Adapted from:
- * https://satoshinm.github.io/blog/171227_stm32hid_pill_duck_scriptable_usb_hid_device_using_an_stm32_blue_pill_from_mouse_jigglers_to_rubber_duckies.html
  */
 #include <stdlib.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/hid.h>
 
@@ -58,15 +56,39 @@ const struct usb_device_descriptor dev_descr = {
     .bNumConfigurations = 1,
 };
 
+static void setup_rcc(void) {
+    rcc_clock_setup_in_hsi_out_48mhz();
+    rcc_periph_clock_enable(RCC_GPIOC);
+
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_USART1);
+}
+
+static void setup_serial(void) {
+    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
+
+    usart_set_baudrate(USART1, 9600);
+    usart_set_databits(USART1, 8);
+    usart_set_stopbits(USART1, USART_STOPBITS_1);
+    usart_set_mode(USART1, USART_MODE_TX | USART_MODE_RX);
+    usart_set_parity(USART1, USART_PARITY_NONE);
+    usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+
+    usart_enable(USART1);
+}
+
+static void setup_led(void) {
+    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
+    gpio_set(GPIOC, GPIO13);
+}
+
 /* Buffer to be used for control requests. */
 uint8_t usbd_control_buffer[128];
 
 int main(void) {
-	rcc_clock_setup_in_hsi_out_48mhz();
-	rcc_periph_clock_enable(RCC_GPIOC);
-
-	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
-	gpio_set(GPIOC, GPIO13);
+    setup_rcc();
+    setup_serial();
+    setup_led();
 
 	usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &config,
 						 usb_strings, sizeof(usb_strings)/sizeof(char *),
@@ -98,6 +120,7 @@ static uint16_t mouse_scroll(uint8_t by) {
 }
 
 static uint16_t keyboard_press(uint8_t key) {
+    // report id, modifiers, reserved, keys[6], leds
 	uint8_t report[9] = {0};
 	report[0] = KEYBOARD_REPORT_ID;
 	report[1] = 0;
@@ -106,13 +129,21 @@ static uint16_t keyboard_press(uint8_t key) {
 	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
 }
 
-static int idx = 0;
-static int keys[6] = {KEY_H, KEY_E, KEY_L, KEY_L, KEY_O, KEY_SPACE};
-volatile uint32_t system_millis = 0;
+static uint8_t numlock_flag = 1;
+volatile uint8_t recved = KEY_NONE;
+
+volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
-	if (++system_millis % 175 == 0) {
-		keyboard_press(keys[(idx++) % 6]);
-		gpio_toggle(GPIOC, GPIO13);
-		keyboard_press(KEY_NONE);
-	}
+	if (++system_millis % 100 == 0) {
+        if (numlock_flag) {
+            keyboard_press(KEY_NUMLOCK);
+            numlock_flag = 0;
+        }
+
+        recved = usart_recv_blocking(USART1);
+        if (recved == 'a') {
+            usart_send_blocking(USART1, recved);
+        }
+        // gpio_toggle(GPIOC, GPIO13);
+    }
 }
