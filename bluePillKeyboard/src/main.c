@@ -61,20 +61,25 @@ static void setup_rcc(void) {
     rcc_periph_clock_enable(RCC_GPIOC);
 
     rcc_periph_clock_enable(RCC_GPIOA);
-    rcc_periph_clock_enable(RCC_USART1);
+    rcc_periph_clock_enable(RCC_USART2);
 }
 
 static void setup_serial(void) {
-    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
+    nvic_enable_irq(NVIC_USART2_IRQ);
 
-    usart_set_baudrate(USART1, 9600);
-    usart_set_databits(USART1, 8);
-    usart_set_stopbits(USART1, USART_STOPBITS_1);
-    usart_set_mode(USART1, USART_MODE_TX | USART_MODE_RX);
-    usart_set_parity(USART1, USART_PARITY_NONE);
-    usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART2_TX);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO_USART2_RX);
 
-    usart_enable(USART1);
+    usart_set_baudrate(USART2, 9600);
+    usart_set_databits(USART2, 8);
+    usart_set_stopbits(USART2, USART_STOPBITS_1);
+    usart_set_mode(USART2, USART_MODE_TX_RX);
+    usart_set_parity(USART2, USART_PARITY_NONE);
+    usart_set_flow_control(USART2, USART_FLOWCONTROL_NONE);
+
+    USART_CR1(USART2) |= USART_CR1_RXNEIE;
+
+    usart_enable(USART2);
 }
 
 static void setup_led(void) {
@@ -134,16 +139,61 @@ volatile uint8_t recved = KEY_NONE;
 
 volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
-	if (++system_millis % 100 == 0) {
-        if (numlock_flag) {
-            keyboard_press(KEY_NUMLOCK);
-            numlock_flag = 0;
+    if (numlock_flag) {
+        keyboard_press(KEY_NUMLOCK);
+        numlock_flag = 0;
+    }
+    if (system_millis % 1000 == 0) {
+        usart_send(USART2, recved);
+    }
+	++system_millis;
+}
+
+void usart2_isr(void) {
+
+    /* Check if we were called because of RXNE */
+    if (((USART_CR1(USART2) & USART_CR1_RXNEIE) != 0) &&
+        ((USART_SR(USART2) & USART_SR_RXNE) != 0)) {
+
+        gpio_toggle(GPIOA, GPIO13);
+
+        recved = usart_recv(USART2);
+        switch (recved) {
+            case 'h':
+                keyboard_press(KEY_H);
+                keyboard_press(KEY_NONE);
+                break;
+            case 'd':
+                mouse_move_x_by(50);
+                break;
+            case 'a':
+                mouse_move_x_by(-50);
+                break;
+            case 'w':
+                mouse_move_y_by(-50);
+                break;
+            case 's':
+                mouse_move_y_by(50);
+                break;
+            default:
+                break;
         }
 
-        recved = usart_recv_blocking(USART1);
-        if (recved == 'a') {
-            usart_send_blocking(USART1, recved);
-        }
-        // gpio_toggle(GPIOC, GPIO13);
+        /* Enable transmit interrupt */
+        // USART_CR1(USART2) |= USART_CR1_TXEIE;
     }
+
+    /* Check if we were called because of TXE */
+    // if (((USART_CR1(USART2) & USART_CR1_TXEIE) != 0) &&
+    //     ((USART_SR(USART2) & USART_SR_TXE) != 0)) {
+
+    //     gpio_toggle(GPIOA, GPIO13);
+
+    //     usart_send(USART2, recved);
+
+    //     /* Disable the TXE interrupt */
+    //     USART_CR1(USART2) &= ~USART_CR1_TXEIE;
+
+    //     recved = KEY_NONE;
+    // }
 }
