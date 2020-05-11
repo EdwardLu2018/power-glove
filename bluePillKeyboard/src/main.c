@@ -149,11 +149,10 @@ static void keyboard_tap(uint8_t key) {
     key_idx = 0;
 }
 
-static uint8_t numlock_flag = 1;
 volatile uint8_t recved = 0;
-
 volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
+    static uint8_t numlock_flag = 1;
     if (numlock_flag) {
         keyboard_press(KEY_NUMLOCK);
         numlock_flag = 0;
@@ -164,13 +163,16 @@ void sys_tick_handler(void) {
         gpio_toggle(GPIOC, GPIO13);
     }
 
-    if (system_millis % 1000 == 0) {
-        keyboard_tap(KEY_A);
-    }
+    // test that it can send 'a' without spamming
+    // if (system_millis % 1000 == 0) {
+    //     keyboard_tap(KEY_A);
+    // }
 
+    // loop to send current key to tap and then release, must be done in 2 cycles
+    // for some reason
     if (system_millis % 100 == 0 && key_idx < 2) {
-        keyboard_press(keys_to_tap[key_idx % 2]);
-        keys_to_tap[key_idx % 2] = KEY_NONE;
+        keyboard_press(keys_to_tap[key_idx]);
+        keys_to_tap[key_idx] = KEY_NONE;
         ++key_idx;
     }
 
@@ -187,10 +189,6 @@ void usart2_isr(void) {
 
         recved = usart_recv(USART2);
         switch (recved) {
-            // case 'h':
-            //     keyboard_press(KEY_H);
-            //     keyboard_press(KEY_NONE);
-            //     break;
             case 'h':
                 keyboard_tap(KEY_H);
                 break;
