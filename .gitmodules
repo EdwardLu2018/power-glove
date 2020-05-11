@@ -1,3 +1,6 @@
-[submodule "blue_pill_keyboard/libopencm3"]
-	path = blue_pill_keyboard/libopencm3
-	url = git://github.com/libopencm3/libopencm3.git
+[submodule "bluePillKeyboard/libopencm3"]
+	path = bluePillKeyboard/libopencm3
+	url = https://github.com/libopencm3/libopencm3
+[submodule "bluePill_HC05/libopencm3"]
+	path = bluePill_HC05/libopencm3
+	url = https://github.com/libopencm3/libopencm3

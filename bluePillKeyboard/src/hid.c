@@ -79,10 +79,11 @@ void hid_set_config(usbd_device *dev, uint16_t wValue) {
     usbd_ep_setup(dev, 0x81, USB_ENDPOINT_ATTR_INTERRUPT, 4, NULL);
 
     usbd_register_control_callback(
-                dev,
-                USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-                USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-                hid_control_request);
+        dev,
+        USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+        hid_control_request
+    );
 
     systick_set_clocksource(STK_CSR_CLKSOURCE_AHB_DIV8);
     systick_set_reload(8999); // 1 ms
