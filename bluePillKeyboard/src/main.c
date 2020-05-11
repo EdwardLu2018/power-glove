@@ -106,22 +106,22 @@ int main(void) {
 
 static uint16_t mouse_click(uint8_t type) {
 	uint8_t report[5] = {MOUSE_REPORT_ID, type, 0, 0, 0};
-	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
+	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_move_x_by(uint8_t by) {
 	uint8_t report[5] = {MOUSE_REPORT_ID, 0, by, 0, 0};
-	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
+	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_move_y_by(uint8_t by) {
 	uint8_t report[5] = {MOUSE_REPORT_ID, 0, 0, by, 0};
-	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
+	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_scroll(uint8_t by) {
 	uint8_t report[5] = {MOUSE_REPORT_ID, 0, 0, 0, by};
-	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
+	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t keyboard_press(uint8_t key) {
@@ -131,20 +131,20 @@ static uint16_t keyboard_press(uint8_t key) {
 	report[1] = 0;
 	report[2] = 1;
 	report[3] = key;
-	return usbd_ep_write_packet(usbd_dev, 0x81, report, sizeof(report));
+	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
-static uint8_t numlock_flag = 1;
+// static uint8_t numlock_flag = 1;
 volatile uint8_t recved = KEY_NONE;
 
 volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
-    if (numlock_flag) {
-        keyboard_press(KEY_NUMLOCK);
-        numlock_flag = 0;
-    }
+    // if (numlock_flag) {
+    //     keyboard_press(KEY_NUMLOCK);
+    //     numlock_flag = 0;
+    // }
     if (system_millis % 1000 == 0) {
-        usart_send(USART2, recved);
+        gpio_toggle(GPIOC, GPIO13);
     }
 	++system_millis;
 }
@@ -155,7 +155,7 @@ void usart2_isr(void) {
     if (((USART_CR1(USART2) & USART_CR1_RXNEIE) != 0) &&
         ((USART_SR(USART2) & USART_SR_RXNE) != 0)) {
 
-        gpio_toggle(GPIOA, GPIO13);
+        // gpio_toggle(GPIOC, GPIO13);
 
         recved = usart_recv(USART2);
         switch (recved) {
@@ -163,37 +163,37 @@ void usart2_isr(void) {
                 keyboard_press(KEY_H);
                 keyboard_press(KEY_NONE);
                 break;
-            case 'd':
-                mouse_move_x_by(50);
+            case 'w':
+                mouse_move_y_by(-1);
                 break;
             case 'a':
-                mouse_move_x_by(-50);
-                break;
-            case 'w':
-                mouse_move_y_by(-50);
+                mouse_move_x_by(-1);
                 break;
             case 's':
-                mouse_move_y_by(50);
+                mouse_move_y_by(1);
+                break;
+            case 'd':
+                mouse_move_x_by(1);
                 break;
             default:
                 break;
         }
 
         /* Enable transmit interrupt */
-        // USART_CR1(USART2) |= USART_CR1_TXEIE;
+        USART_CR1(USART2) |= USART_CR1_TXEIE;
     }
 
     /* Check if we were called because of TXE */
-    // if (((USART_CR1(USART2) & USART_CR1_TXEIE) != 0) &&
-    //     ((USART_SR(USART2) & USART_SR_TXE) != 0)) {
+    if (((USART_CR1(USART2) & USART_CR1_TXEIE) != 0) &&
+        ((USART_SR(USART2) & USART_SR_TXE) != 0)) {
 
-    //     gpio_toggle(GPIOA, GPIO13);
+        // gpio_toggle(GPIOC, GPIO13);
 
-    //     usart_send(USART2, recved);
+        usart_send(USART2, recved);
 
-    //     /* Disable the TXE interrupt */
-    //     USART_CR1(USART2) &= ~USART_CR1_TXEIE;
+        /* Disable the TXE interrupt */
+        USART_CR1(USART2) &= ~USART_CR1_TXEIE;
 
-    //     recved = KEY_NONE;
-    // }
+        recved = KEY_NONE;
+    }
 }
