@@ -105,22 +105,30 @@ int main(void) {
 }
 
 static uint16_t mouse_click(uint8_t type) {
-	uint8_t report[5] = {MOUSE_REPORT_ID, type, 0, 0, 0};
+	uint8_t report[5] = {0};
+    report[0] = MOUSE_REPORT_ID;
+    report[1] = type;
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_move_x_by(uint8_t by) {
-	uint8_t report[5] = {MOUSE_REPORT_ID, 0, by, 0, 0};
+	uint8_t report[5] = {0};
+    report[0] = MOUSE_REPORT_ID;
+    report[2] = by;
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_move_y_by(uint8_t by) {
-	uint8_t report[5] = {MOUSE_REPORT_ID, 0, 0, by, 0};
+	uint8_t report[5] = {0};
+    report[0] = MOUSE_REPORT_ID;
+    report[3] = by;
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
 static uint16_t mouse_scroll(uint8_t by) {
-	uint8_t report[5] = {MOUSE_REPORT_ID, 0, 0, 0, by};
+	uint8_t report[5] = {0};
+    report[0] = MOUSE_REPORT_ID;
+    report[4] = by;
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
@@ -130,22 +138,42 @@ static uint16_t keyboard_press(uint8_t key) {
 	report[0] = KEYBOARD_REPORT_ID;
 	report[1] = 0;
 	report[2] = 1;
-	report[3] = key;
+    report[3] = key;
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
-// static uint8_t numlock_flag = 1;
-volatile uint8_t recved = KEY_NONE;
+static uint8_t keys_to_tap[2] = {0};
+static uint8_t key_idx = 0;
+static void keyboard_tap(uint8_t key) {
+    keys_to_tap[0] = key;
+    key_idx = 0;
+}
+
+static uint8_t numlock_flag = 1;
+volatile uint8_t recved = 0;
 
 volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
-    // if (numlock_flag) {
-    //     keyboard_press(KEY_NUMLOCK);
-    //     numlock_flag = 0;
-    // }
-    if (system_millis % 1000 == 0) {
+    if (numlock_flag) {
+        keyboard_press(KEY_NUMLOCK);
+        numlock_flag = 0;
+    }
+
+    // blink on-board led as sanity check that system is on
+    if (system_millis % 500 == 0) {
         gpio_toggle(GPIOC, GPIO13);
     }
+
+    if (system_millis % 1000 == 0) {
+        keyboard_tap(KEY_A);
+    }
+
+    if (system_millis % 100 == 0 && key_idx < 2) {
+        keyboard_press(keys_to_tap[key_idx % 2]);
+        keys_to_tap[key_idx % 2] = KEY_NONE;
+        ++key_idx;
+    }
+
 	++system_millis;
 }
 
@@ -159,21 +187,27 @@ void usart2_isr(void) {
 
         recved = usart_recv(USART2);
         switch (recved) {
+            // case 'h':
+            //     keyboard_press(KEY_H);
+            //     keyboard_press(KEY_NONE);
+            //     break;
             case 'h':
-                keyboard_press(KEY_H);
-                keyboard_press(KEY_NONE);
+                keyboard_tap(KEY_H);
+                break;
+            case 'i':
+                keyboard_tap(KEY_I);
                 break;
             case 'w':
-                mouse_move_y_by(-1);
+                mouse_move_y_by(-5);
                 break;
             case 'a':
-                mouse_move_x_by(-1);
+                mouse_move_x_by(-5);
                 break;
             case 's':
-                mouse_move_y_by(1);
+                mouse_move_y_by(5);
                 break;
             case 'd':
-                mouse_move_x_by(1);
+                mouse_move_x_by(5);
                 break;
             default:
                 break;
