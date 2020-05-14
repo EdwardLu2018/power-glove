@@ -10,6 +10,7 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/hid.h>
 
+#include "delay.h"
 #include "hid.h"
 #include "mouse.h"
 #include "keyboard.h"
@@ -94,6 +95,7 @@ int main(void) {
     setup_rcc();
     setup_serial();
     setup_led();
+    setup_delay();
 
 	usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &config,
 						 usb_strings, sizeof(usb_strings)/sizeof(char *),
@@ -142,11 +144,18 @@ static uint16_t keyboard_press(uint8_t key) {
 	return usbd_ep_write_packet(usbd_dev, 0x81, &report, sizeof(report));
 }
 
-static uint8_t keys_to_tap[2] = {0};
+static uint8_t keys_buf[256] = {0};
+static uint8_t keys_len = 0;
 static uint8_t key_idx = 0;
 static void keyboard_tap(uint8_t key) {
-    keys_to_tap[0] = key;
-    key_idx = 0;
+    if (keys_len >= 256) {
+        keys_len = 0;
+        key_idx = 0;
+    }
+    keys_buf[keys_len] = key;
+    ++keys_len;
+    keys_buf[keys_len] = KEY_NONE;
+    ++keys_len;
 }
 
 volatile uint8_t recved = 0;
@@ -154,11 +163,11 @@ volatile uint64_t system_millis = 0;
 void sys_tick_handler(void) {
     static uint8_t numlock_flag = 1;
     if (numlock_flag) {
-        keyboard_press(KEY_NUMLOCK);
+        keyboard_tap(KEY_NUMLOCK);
         numlock_flag = 0;
     }
 
-    // blink on-board led as sanity check that system is on
+    // blink on-board led as a sanity check that system is on
     if (system_millis % 500 == 0) {
         gpio_toggle(GPIOC, GPIO13);
     }
@@ -170,9 +179,8 @@ void sys_tick_handler(void) {
 
     // loop to send current key to tap and then release, must be done in 2 cycles
     // for some reason
-    if (system_millis % 100 == 0 && key_idx < 2) {
-        keyboard_press(keys_to_tap[key_idx]);
-        keys_to_tap[key_idx] = KEY_NONE;
+    if (system_millis % 100 == 0 && key_idx < keys_len) {
+        keyboard_press(keys_buf[key_idx]);
         ++key_idx;
     }
 
@@ -194,6 +202,12 @@ void usart2_isr(void) {
                 break;
             case 'i':
                 keyboard_tap(KEY_I);
+                break;
+            case 't':
+                keyboard_press(KEY_T);
+                delay_us(-1);
+                keyboard_press(KEY_NONE);
+                delay_us(-1);
                 break;
             case 'w':
                 mouse_move_y_by(-5);
