@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+typedef uint8_t key_t;
+
 #define KEY_MOD_LCTRL  0x01
 #define KEY_MOD_LSHIFT 0x02
 #define KEY_MOD_LALT   0x04

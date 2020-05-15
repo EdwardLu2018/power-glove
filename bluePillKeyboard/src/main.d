@@ -41,4 +41,5 @@ main.o: main.c \
  ../libopencm3/include/libopencm3/stm32/common/usart_common_all.h \
  ../libopencm3/include/libopencm3/usb/usbd.h \
  ../libopencm3/include/libopencm3/usb/usbstd.h \
- ../libopencm3/include/libopencm3/usb/hid.h hid.h mouse.h keyboard.h
+ ../libopencm3/include/libopencm3/usb/hid.h delay.h hid.h mouse.h \
+ keyboard.h
